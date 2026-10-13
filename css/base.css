@@ -1,0 +1,87 @@
+/* ============================================================================
+   base.css — reset + base element styling. Loaded after tokens.css.
+   ============================================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg-void);
+  color: var(--fg-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; /* the atmosphere layer intentionally bleeds past the edge */
+}
+
+img, svg, video { max-width: 100%; display: block; }
+
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: var(--ls-display); margin: 0; }
+p { margin: 0; color: var(--fg-secondary); }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: none; cursor: pointer; }
+
+/* Visible focus state, independent of the custom cursor (§47) */
+:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Utility: hide visually but keep for screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .container { padding-inline: var(--space-4); }
+}
+
+/* Page transition fallback classes (see js/core/transitions.js) */
+html.page-enter { opacity: 0; }
+html.page-enter-active { opacity: 1; transition: opacity var(--duration-page-transition) var(--ease-standard); }
+html.page-exit-active { opacity: 0; transition: opacity 180ms var(--ease-standard); }
+@media (prefers-reduced-motion: reduce) {
+  html.page-enter, html.page-enter-active, html.page-exit-active { opacity: 1; transition: none; }
+}
+
+/* Reveal-on-scroll base state (see js/core/motion.js) */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--duration-slow) var(--ease-standard),
+              transform var(--duration-slow) var(--ease-standard);
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
+/* skip link becomes visible when focused (keyboard users) */
+a.sr-only:focus { position: fixed; top: 8px; left: 8px; width: auto; height: auto; clip: auto; z-index: 10000; background: var(--fg-primary); color: var(--bg-void); padding: 8px 12px; border-radius: var(--radius-sm); }

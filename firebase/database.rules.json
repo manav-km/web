@@ -1,0 +1,64 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "conversations": {
+      "$convId": {
+        ".read": "auth != null && data.child('participants').child(auth.uid).exists()",
+        ".write": false
+      }
+    },
+
+    "messages": {
+      "$convId": {
+        ".read": "auth != null && root.child('conversations').child($convId).child('participants').child(auth.uid).exists()",
+        ".write": false
+      }
+    },
+
+    "drafts": {
+      "$convId": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "auth != null && auth.uid === $uid && root.child('conversations').child($convId).child('participants').child(auth.uid).exists()",
+          ".validate": "newData.child('content').isString() && newData.child('content').val().length <= 4000"
+        }
+      }
+    },
+
+    "typing": {
+      "$convId": {
+        "$uid": {
+          ".read": "auth != null && root.child('conversations').child($convId).child('participants').child(auth.uid).exists()",
+          ".write": "auth != null && auth.uid === $uid && root.child('conversations').child($convId).child('participants').child(auth.uid).exists()",
+          ".validate": "newData.isBoolean()"
+        }
+      }
+    },
+
+    "presence": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('conversations').child(auth.uid + '_' + $uid).exists() || root.child('conversations').child($uid + '_' + auth.uid).exists())",
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['online'])"
+      }
+    },
+
+    "unread": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$convId": {
+          ".write": "auth != null && auth.uid === $uid && newData.val() === 0"
+        }
+      }
+    },
+
+    "signals": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
+      }
+    }
+  }
+}

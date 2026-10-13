@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="/js/core/https.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Manav-KM — Developer</title>
+  <meta name="description" content="Manav-KM — developer working across web development, applications, AI, automation, APIs, and robotics." />
+
+  <!-- Open Graph / Twitter card (§64) -->
+  <meta property="og:title" content="Manav-KM — Developer" />
+  <meta property="og:description" content="Developer working across web development, applications, AI, automation, APIs, and robotics." />
+  <meta property="og:image" content="/assets/branding/banner.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="canonical" href="https://manav-km.dev/" />
+
+  <!-- Tab image, derived from the official logo only (never redesigned) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/branding/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/branding/favicon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/branding/favicon-180.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+</head>
+<body>
+
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atmosphere__orb atmosphere__orb--red"></div>
+    <div class="atmosphere__orb atmosphere__orb--blue"></div>
+  </div>
+
+  <div data-include="nav">
+    <!-- no-JS fallback nav -->
+    <noscript>
+      <nav aria-label="Primary">
+        <a href="/">Home</a> · <a href="/frontend/pages/about.html">About Me</a> · <a href="/frontend/pages/projects.html">Projects</a> ·
+        <a href="/frontend/pages/repositories.html">Repositories</a> · <a href="/frontend/pages/achievements.html">Achievements</a> ·
+        <a href="/frontend/pages/uploads.html">Uploads</a> · <a href="/frontend/pages/blog.html">Blog</a> · <a href="/frontend/pages/connect.html">Connect</a>
+      </nav>
+    </noscript>
+  </div>
+
+  <main id="main-content">
+    <section class="hero">
+      <h1 class="hero__title">MANAV KUMAR MISHRA</h1>
+      <p class="hero__subtitle">
+        Developer working across web development, applications, AI, automation,
+        APIs, and robotics — turning ideas into real, working systems, from the
+        interface down to the hardware.
+      </p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="/frontend/pages/projects.html" data-cursor-hover>View Projects</a>
+        <a class="btn btn--ghost" href="/frontend/pages/connect.html" data-cursor-hover>Connect</a>
+      </div>
+    </section>
+
+    <section class="section container" data-reveal>
+      <h2 class="section__heading">Selected work</h2>
+      <div class="card-grid">
+        <a class="card" href="/frontend/pages/projects.html" data-cursor-hover>
+          <p class="card__eyebrow">Websites</p>
+          <h3 class="card__title">Library &amp; VelvetBites</h3>
+          <p class="card__desc">Two of several web projects — full list on the Projects page.</p>
+        </a>
+        <a class="card" href="/frontend/pages/projects.html" data-cursor-hover>
+          <p class="card__eyebrow">PC Apps</p>
+          <h3 class="card__title">NexBoard</h3>
+          <p class="card__desc">A classroom-oriented digital whiteboard application.</p>
+        </a>
+        <a class="card" href="/frontend/pages/projects.html" data-cursor-hover>
+          <p class="card__eyebrow">Robotics</p>
+          <h3 class="card__title">CROWS &amp; the farming station</h3>
+          <p class="card__desc">Physical computing: an automatic fire-extinguishing car and a handheld AI-powered farming station.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="section container" data-reveal>
+      <h2 class="section__heading">Explore</h2>
+      <div class="card-grid">
+        <a class="card" href="/frontend/pages/repositories.html" data-cursor-hover>
+          <p class="card__eyebrow">Code</p>
+          <h3 class="card__title">Repositories</h3>
+          <p class="card__desc">Live GitHub data — stars, forks, languages.</p>
+        </a>
+        <a class="card" href="/frontend/pages/achievements.html" data-cursor-hover>
+          <p class="card__eyebrow">Milestones</p>
+          <h3 class="card__title">Achievements</h3>
+          <p class="card__desc">Hackathons, development, robotics, and more.</p>
+        </a>
+        <a class="card" href="/frontend/pages/blog.html" data-cursor-hover>
+          <p class="card__eyebrow">Writing</p>
+          <h3 class="card__title">Blog</h3>
+          <p class="card__desc">Things learned, built, and explored along the way.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="footer">
+    <noscript>
+      <footer>
+        <a href="https://github.com/manav-km">GitHub</a> ·
+        <a href="https://www.linkedin.com/in/manav-krm/">LinkedIn</a> · <a href="/frontend/pages/legal.html">Terms & Conditions</a>
+      </footer>
+    </noscript>
+  </div>
+
+  <script src="/js/core/include.js" defer></script>
+  <script src="/js/core/footer-year.js" defer></script>
+  <script src="/js/core/cursor.js" defer></script>
+  <script src="/js/core/transitions.js" defer></script>
+  <script src="/js/core/motion.js" defer></script>
+  <script src="/js/core/atmosphere.js" defer></script>
+  <script type="module" src="/js/core/auth-ui.js"></script>
+  <script type="module" src="/js/core/analytics.js"></script>
+  <script type="module" src="/js/core/consent-banner.js"></script>
+</body>
+</html>

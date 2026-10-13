@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /portfolio/admin
+Disallow: /api/
+
+Sitemap: https://manav-km.dev/sitemap.xml

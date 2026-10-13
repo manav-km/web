@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://manav-km.dev/</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/about.html</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/projects.html</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/repositories.html</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/achievements.html</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/uploads.html</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/blog.html</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/connect.html</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/legal.html</loc></url>
+  <!-- /blog/<slug> entries should be generated server-side once posts exist -->
+  </urlset>

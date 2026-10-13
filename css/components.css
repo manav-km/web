@@ -1,0 +1,349 @@
+/* ============================================================================
+   components.css — shared components used across every public page.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------- Nav ---- */
+.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background: linear-gradient(to bottom, rgba(5,6,10,0.9), rgba(5,6,10,0));
+  backdrop-filter: blur(8px);
+}
+
+.site-nav__logo img { height: 32px; width: auto; }
+.site-nav__logo { display: flex; align-items: center; gap: var(--space-2); }
+
+.site-nav__links {
+  display: flex;
+  gap: var(--space-6);
+  list-style: none;
+  margin: 0; padding: 0;
+}
+
+.site-nav__links a {
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-uppercase);
+  color: var(--fg-secondary);
+  transition: color var(--duration-fast) var(--ease-standard);
+  padding: var(--space-2) 0;
+  position: relative;
+}
+.site-nav__links a:hover,
+.site-nav__links a[aria-current="page"] { color: var(--fg-primary); }
+.site-nav__links a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent-red), var(--accent-blue));
+}
+
+.site-nav__right { display: flex; align-items: center; gap: var(--space-4); }
+
+.site-nav__signin,
+.site-nav__bell,
+.site-nav__profile {
+  display: none; /* toggled by JS once auth state is known — see js/core/auth-ui.js in Phase 5 */
+}
+.site-nav__signin.is-ready { display: inline-flex; }
+.site-nav__bell.is-ready { display: inline-flex; }
+.site-nav__profile.is-ready { display: inline-flex; }
+
+.site-nav__bell { position: relative; width: 20px; height: 20px; }
+.site-nav__bell .unread-dot {
+  position: absolute; top: -2px; right: -2px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent-red);
+  box-shadow: 0 0 8px var(--accent-red-glow);
+  display: none;
+}
+
+.site-nav__menu-toggle { display: none; }
+
+@media (max-width: 860px) {
+  .site-nav__links { display: none; }
+  .site-nav__menu-toggle { display: inline-flex; }
+}
+
+/* -------------------------------------------------------------- Buttons -- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-uppercase);
+  transition: transform var(--duration-fast) var(--ease-standard),
+              box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.btn--primary {
+  background: var(--fg-primary);
+  color: var(--bg-void);
+}
+.btn--primary:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 0 24px var(--accent-blue-glow);
+}
+
+.btn--ghost {
+  border: 1px solid var(--border-hairline);
+  color: var(--fg-primary);
+}
+.btn--ghost:hover { border-color: var(--border-strong); }
+
+/* ---------------------------------------------------------------- Card --- */
+.card {
+  background: var(--bg-near-black);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+  transition: border-color var(--duration-base) var(--ease-standard),
+              transform var(--duration-base) var(--ease-standard);
+}
+.card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+.card__eyebrow {
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-uppercase);
+  color: var(--fg-muted);
+}
+.card__title { font-size: var(--fs-h3); margin-top: var(--space-2); }
+.card__desc { margin-top: var(--space-3); font-size: var(--fs-small); }
+
+/* -------------------------------------------------------------- Footer --- */
+.site-footer {
+  border-top: 1px solid var(--border-hairline);
+  padding: var(--space-16) 0 var(--space-8);
+  margin-top: var(--space-24);
+}
+.site-footer__socials {
+  display: flex;
+  gap: var(--space-4);
+  list-style: none;
+  padding: 0; margin: 0 0 var(--space-6);
+  flex-wrap: wrap;
+}
+.site-footer__socials a {
+  font-size: var(--fs-small);
+  color: var(--fg-secondary);
+}
+.site-footer__socials a:hover { color: var(--fg-primary); }
+.site-footer__meta {
+  font-size: var(--fs-micro);
+  color: var(--fg-muted);
+}
+
+/* ---------------------------------------------------------- Atmosphere --- */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.atmosphere__orb {
+  position: absolute;
+  width: 60vmax; height: 60vmax;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.28;
+  will-change: transform;
+}
+.atmosphere__orb--red {
+  background: radial-gradient(circle, var(--accent-red), transparent 70%);
+  top: -20%; left: -15%;
+}
+.atmosphere__orb--blue {
+  background: radial-gradient(circle, var(--accent-blue), transparent 70%);
+  bottom: -25%; right: -15%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .atmosphere__orb { transition: transform 600ms var(--ease-standard); }
+}
+
+/* -------------------------------------------------------------- Cursor --- */
+/* Only injected/activated by js/core/cursor.js on pointer:fine devices */
+#cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--cursor-size-default);
+  height: var(--cursor-size-default);
+  border-radius: 50%;
+  background: var(--fg-primary);
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  transform: translate(-50%, -50%);
+  transition: width var(--duration-fast) var(--ease-standard),
+              height var(--duration-fast) var(--ease-standard),
+              box-shadow var(--duration-fast) var(--ease-standard),
+              background var(--duration-fast) var(--ease-standard);
+}
+#cursor-dot.is-hovering {
+  width: var(--cursor-size-hover);
+  height: var(--cursor-size-hover);
+  background: transparent;
+  border: 1px solid var(--fg-primary);
+  box-shadow: 0 0 30px var(--accent-blue-glow);
+}
+#cursor-dot.is-hovering.glow-red {
+  box-shadow: 0 0 30px var(--accent-red-glow);
+}
+
+/* ----------------------------------------------------------------- Hero -- */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-24) var(--space-6);
+}
+.hero__title {
+  font-size: var(--fs-hero);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-display);
+}
+.hero__subtitle {
+  margin-top: var(--space-6);
+  max-width: 640px;
+  font-size: var(--fs-body-lg);
+}
+.hero__cta {
+  margin-top: var(--space-8);
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.page-hero {
+  padding: calc(var(--space-24) + 2rem) var(--space-6) var(--space-16);
+  text-align: center;
+}
+.page-hero__title {
+  font-size: var(--fs-h1);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-uppercase);
+}
+.page-hero__subtitle {
+  margin-top: var(--space-4);
+  font-size: var(--fs-body-lg);
+}
+
+/* ------------------------------------------------------------ Sections --- */
+.section {
+  padding: var(--space-16) 0;
+}
+.section__heading {
+  font-size: var(--fs-h2);
+  margin-bottom: var(--space-8);
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-6);
+}
+
+/* ===================================================================
+   MOBILE NAV — the hamburger toggles .is-open on .site-nav__links;
+   this is the panel that makes that actually visible (previously
+   missing — the toggle had no effect).
+   =================================================================== */
+@media (max-width: 860px) {
+  .site-nav__links {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; right: 0;
+    height: 100dvh;
+    width: min(78vw, 320px);
+    background: var(--bg-near-black);
+    border-left: 1px solid var(--border-strong);
+    padding: calc(var(--space-16) + env(safe-area-inset-top, 0px)) var(--space-6) var(--space-6);
+    gap: var(--space-2);
+    transform: translateX(100%);
+    transition: transform var(--duration-base) var(--ease-standard);
+    z-index: var(--z-drawer);
+    overflow-y: auto;
+  }
+  .site-nav__links.is-open { display: flex; transform: translateX(0); }
+  .site-nav__links a {
+    padding: var(--space-3) var(--space-2);
+    font-size: var(--fs-body);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  /* Backdrop behind the open mobile panel */
+  .site-nav__links.is-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    width: 100vw; height: 100dvh;
+    background: rgba(0,0,0,.5);
+    z-index: -1;
+    transform: translateX(-100%); /* cancel the parent's translate so this covers the whole viewport, not just the panel */
+  }
+}
+
+/* Touch targets: every tappable control gets a real minimum hit area on
+   coarse-pointer devices, without changing visual size on desktop. */
+@media (pointer: coarse) {
+  .site-nav__bell, .site-nav__menu-toggle, .site-nav__profile {
+    min-width: 44px; min-height: 44px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .filter, .btn--sm { min-height: 44px; }
+  .star { padding: 6px; } /* enlarges the tap area around each star without changing the glyph size */
+  .messenger-btn { width: 56px; height: 56px; } /* already >=44px, kept explicit */
+}
+
+/* Hero/section spacing tightened on small phones so nothing feels oversized */
+@media (max-width: 480px) {
+  .hero { padding: var(--space-16) var(--space-4); }
+  .page-hero { padding: calc(var(--space-16) + env(safe-area-inset-top, 0px)) var(--space-4) var(--space-12); }
+  .card-grid, .tile-grid { grid-template-columns: 1fr; }
+  .drawer { width: 100%; }
+  .modal { padding: var(--space-6); }
+}
+
+/* ---- Consent banner ---- */
+.consent-banner {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 520px;
+  width: calc(100% - var(--space-8));
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  z-index: var(--z-toast);
+  box-shadow: var(--shadow-card);
+}
+.consent-banner p {
+  margin: 0 0 var(--space-4);
+  font-size: var(--fs-small);
+  color: var(--fg-secondary);
+  line-height: var(--lh-normal);
+}
+.consent-banner__btns {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+

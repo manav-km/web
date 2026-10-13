@@ -1,0 +1,92 @@
+/* ============================================================================
+   tokens.css — design tokens for the portfolio.
+   Loaded by every page before component CSS. Nothing in here renders UI
+   directly; it only defines the variables components consume.
+   ============================================================================ */
+
+:root {
+  /* ---- Color: black/white dominant, red/blue as LIGHT, not blocks ---- */
+  --bg-void:        #05060a;   /* base background */
+  --bg-near-black:  #0b0d12;   /* elevated surfaces (cards, nav) */
+  --bg-elevated:    #12151c;   /* modals, drawers */
+
+  --fg-primary:     #f5f6f8;   /* body/heading text */
+  --fg-secondary:   #a3a8b3;   /* secondary text, captions */
+  --fg-muted:       #6b7080;   /* disabled/placeholder */
+
+  --accent-red:        #ff3b3b;
+  --accent-red-glow:    rgba(255, 59, 59, 0.35);
+  --accent-blue:        #2f8bff;
+  --accent-blue-glow:    rgba(47, 139, 255, 0.35);
+
+  --border-hairline: rgba(255, 255, 255, 0.08);
+  --border-strong:   rgba(255, 255, 255, 0.16);
+
+  --status-success:  #35d399;
+  --status-warning:  #f2b84b;
+  --status-danger:   #ff5c5c;
+
+  /* ---- Typography ---- */
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif; /* cinematic headlines */
+  --font-body:    "Inter", system-ui, -apple-system, sans-serif;    /* everything readable */
+  --font-mono:    "JetBrains Mono", "Fira Code", monospace;         /* code, repo stats */
+
+  --fs-hero:    clamp(3rem, 9vw, 7.5rem);   /* homepage "MANAV KUMAR MISHRA" */
+  --fs-h1:      clamp(2.25rem, 5vw, 3.75rem);
+  --fs-h2:      clamp(1.5rem, 3vw, 2.25rem);
+  --fs-h3:      1.375rem;
+  --fs-body-lg: 1.125rem;
+  --fs-body:    1rem;
+  --fs-small:   0.875rem;
+  --fs-micro:   0.75rem;
+
+  --lh-tight: 1.1;
+  --lh-normal: 1.5;
+  --ls-display: -0.01em;
+  --ls-uppercase: 0.08em;
+
+  /* ---- Spacing scale (4px base) ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* ---- Radius / elevation ---- */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.45);
+
+  /* ---- Motion ---- */
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-base: 280ms;
+  --duration-slow: 500ms;
+  --duration-page-transition: 420ms;
+
+  /* ---- Cursor (desktop only; see js/core/cursor.js) ---- */
+  --cursor-size-default: 8px;
+  --cursor-size-hover: 48px;
+  --cursor-glow-blend: 0.5;
+
+  /* ---- Z-index scale ---- */
+  --z-nav: 100;
+  --z-cursor: 9999;
+  --z-modal: 500;
+  --z-drawer: 400;
+  --z-toast: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-slow: 1ms;
+    --duration-page-transition: 1ms;
+  }
+}
