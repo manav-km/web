@@ -8,6 +8,42 @@ import { api, h, fmtDate, label } from "./api.js";
 import { listenSignal } from "./rtdb.js";
 
 let menu = null;
+let currentAuthUser = null;
+let authReady = false;
+let authReadyResolver;
+const authReadyPromise = new Promise((resolve) => {
+  authReadyResolver = resolve;
+});
+
+/**
+ * Checks whether the user is logged in.
+ * If signed in, lets them enter connect.html.
+ * If not signed in, redirects them to auth.html.
+ */
+export async function handleConnectAccess(event) {
+  if (event) {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return; // Allow open in new tab / right click
+    }
+    event.preventDefault();
+  }
+
+  const user = authReady ? currentAuthUser : await authReadyPromise;
+  if (user) {
+    window.location.href = "/frontend/pages/connect.html";
+  } else {
+    window.location.href = "/frontend/pages/auth.html?redirect=" + encodeURIComponent("/frontend/pages/connect.html");
+  }
+}
+window.handleConnectAccess = handleConnectAccess;
+
+// Intercept all Connect clicks across any page
+document.addEventListener("click", (e) => {
+  const connectLink = e.target.closest('a[href*="connect.html"]');
+  if (connectLink && !window.location.pathname.endsWith("connect.html")) {
+    handleConnectAccess(e);
+  }
+});
 
 function whenNavReady(fn) {
   if (document.querySelector(".site-nav")) {
@@ -67,6 +103,11 @@ whenNavReady(() => {
   });
 
   onAuth(async (user) => {
+    currentAuthUser = user;
+    if (!authReady) {
+      authReady = true;
+      authReadyResolver(user);
+    }
     window.__authResolved = true;
     clearInterval(poll); unsubSignal?.(); unsubSignal = null; closeMenu();
     const links = nav.querySelector(".site-nav__links");
