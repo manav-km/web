@@ -43,7 +43,7 @@ class RepositoryOut(BaseModel):
     repo_name: str
     description: str | None = None
     github_url: str
-    languages: list[dict] = []
+    languages: list[dict] | None = []
     stars: int = 0
     forks: int = 0
     github_updated_at: datetime | None = None
