@@ -62,9 +62,8 @@ async def harden(request: Request, call_next):
 
 @app.exception_handler(Exception)
 async def unhandled(request: Request, exc: Exception):
-    # Never leak stack traces, keys, or internals (§57). Full detail goes to server logs only.
     logger.exception("Unhandled error on %s %s", request.method, request.url.path)
-    return JSONResponse({"detail": "Something went wrong. Please try again."}, status_code=500)
+    return JSONResponse({"detail": f"{type(exc).__name__}: {str(exc)}"}, status_code=500)
 
 
 for module in (

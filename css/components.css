@@ -366,8 +366,35 @@
   line-height: var(--lh-tight);
   letter-spacing: var(--ls-display);
 }
+.hero__tagline {
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  color: var(--fg-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  letter-spacing: 0.02em;
+}
+.hero__tagline-prefix {
+  color: var(--fg-muted);
+}
+.hero__typewriter {
+  color: var(--accent-blue);
+  font-weight: 500;
+  text-shadow: 0 0 16px var(--accent-blue-glow);
+}
+.hero__cursor {
+  color: var(--accent-red);
+  font-weight: 300;
+  animation: blink-cursor 0.9s infinite step-start;
+}
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
 .hero__subtitle {
-  margin-top: var(--space-6);
+  margin-top: var(--space-4);
   max-width: 640px;
   font-size: var(--fs-body-lg);
 }
