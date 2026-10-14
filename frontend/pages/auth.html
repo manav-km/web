@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="/css/base.css" />
   <link rel="stylesheet" href="/css/components.css" />
   <link rel="stylesheet" href="/css/pages.css" />
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <a class="sr-only" href="#main-content">Skip to content</a>
@@ -47,15 +48,15 @@
 
   <main id="main-content">
     <header class="page-hero">
-      <h1 class="page-hero__title" id="auth-heading">ACCOUNT ACCESS</h1>
-      <p class="page-hero__subtitle" id="auth-subheading">Sign in to your account or create a new one to access the client portal.</p>
+      <h1 class="page-hero__title" id="auth-heading">CREATE ACCOUNT</h1>
+      <p class="page-hero__subtitle" id="auth-subheading">Create your client account to start a project, discuss requirements, and track milestones.</p>
     </header>
 
-    <section class="container" style="max-width: 520px; margin-bottom: var(--space-24);">
+    <section class="container" style="max-width: 760px; margin-bottom: var(--space-24);">
       <!-- Card Container for Auth -->
       <div class="card" style="padding: var(--space-8);">
         <!-- Mode Switcher Tabs -->
-        <div class="filters" style="margin-bottom: var(--space-6); justify-content: stretch; display: grid; grid-template-columns: 1fr 1fr;">
+        <div class="filters" style="margin-bottom: var(--space-6); justify-content: stretch; display: grid; grid-template-columns: 1fr 1fr; max-width: 380px; margin-inline: auto;">
           <button id="tab-signin" class="filter" type="button" aria-pressed="false" style="text-align: center; border-radius: var(--radius-sm);" data-cursor-hover>Sign In</button>
           <button id="tab-signup" class="filter" type="button" aria-pressed="true" style="text-align: center; border-radius: var(--radius-sm);" data-cursor-hover>Create Account</button>
         </div>
@@ -63,66 +64,128 @@
         <div id="auth-alert" role="alert" style="margin-bottom: var(--space-4);"></div>
 
         <form id="auth-form" class="form form--full" novalidate>
-          <!-- Full Name (Sign Up only) -->
-          <div id="row-name" class="field">
-            <label for="auth-name">Full Name *</label>
-            <input id="auth-name" type="text" autocomplete="name" placeholder="Your Full Name" />
-          </div>
+          <!-- ==================== [Box 1 Start] Personal Info ==================== -->
+          <div id="box-personal" class="auth-box">
+            <h3 class="auth-box__title">Personal Info</h3>
 
-          <!-- Email -->
-          <div class="field">
-            <label for="auth-email">Email Address *</label>
-            <input id="auth-email" type="email" autocomplete="email" required placeholder="name@example.com" />
-          </div>
-
-          <!-- Password -->
-          <div class="field">
-            <label for="auth-pass">Password *</label>
-            <input id="auth-pass" type="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters" />
-          </div>
-
-          <!-- Additional Profile Details (Sign Up only) -->
-          <div id="row-details-1" class="form__row" style="margin-top: var(--space-2);">
-            <div class="field">
-              <label for="auth-phone">Phone Number</label>
-              <input id="auth-phone" type="tel" autocomplete="tel" placeholder="+1 (555) 000-0000" />
+            <!-- Row 1: Full Legal name & Address -->
+            <div class="form__row" id="row-personal-1">
+              <div class="field" id="col-name">
+                <label for="auth-name">Full Legal Name *</label>
+                <input id="auth-name" type="text" autocomplete="name" placeholder="John Doe" />
+              </div>
+              <div class="field" id="col-address">
+                <label for="auth-address">Address *</label>
+                <input id="auth-address" type="text" autocomplete="street-address" placeholder="City, State, Country" />
+              </div>
             </div>
-            <div class="field">
-              <label for="auth-country">Country / Region</label>
-              <input id="auth-country" type="text" autocomplete="country-name" placeholder="e.g. India, United States" />
+
+            <!-- Row 2: E-Mail & Phone -->
+            <div class="form__row" id="row-personal-2" style="margin-top: var(--space-4);">
+              <div class="field" id="col-email">
+                <label for="auth-email">E-Mail *</label>
+                <input id="auth-email" type="email" autocomplete="email" required placeholder="name@example.com" />
+              </div>
+              <div class="field" id="col-phone">
+                <label for="auth-phone">Phone *</label>
+                <input id="auth-phone" type="tel" autocomplete="tel" placeholder="+1 (555) 000-0000" />
+              </div>
+            </div>
+
+            <!-- Row 3: Password & Confirm Password -->
+            <div class="form__row" id="row-personal-3" style="margin-top: var(--space-4);">
+              <div class="field" id="col-pass">
+                <label for="auth-pass">Password *</label>
+                <input id="auth-pass" type="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters" />
+              </div>
+              <div class="field" id="col-pass-confirm">
+                <label for="auth-pass-confirm">Confirm Password *</label>
+                <input id="auth-pass-confirm" type="password" autocomplete="new-password" minlength="8" placeholder="Re-enter password" />
+              </div>
             </div>
           </div>
+          <!-- ==================== [Box 1 End] ==================== -->
 
-          <div id="row-details-2" class="form__row">
-            <div class="field">
-              <label for="auth-profession">Profession / Title</label>
-              <input id="auth-profession" type="text" placeholder="e.g. Product Manager, Founder" />
+          <!-- ==================== [Box 2 Start] Business Info ==================== -->
+          <div id="box-business" class="auth-box">
+            <h3 class="auth-box__title">Business Info</h3>
+
+            <!-- Row 1: Organisation & Postal Address -->
+            <div class="form__row">
+              <div class="field">
+                <label for="auth-business-org">Organisation</label>
+                <input id="auth-business-org" type="text" autocomplete="organization" placeholder="Company or organization" />
+              </div>
+              <div class="field">
+                <label for="auth-business-address">Postal Address</label>
+                <input id="auth-business-address" type="text" placeholder="Office / postal address" />
+              </div>
             </div>
-            <div class="field">
-              <label for="auth-business">Company / Business</label>
-              <input id="auth-business" type="text" placeholder="Your organization (optional)" />
+
+            <!-- Row 2: E-Mail & Phone -->
+            <div class="form__row" style="margin-top: var(--space-4);">
+              <div class="field">
+                <label for="auth-business-email">E-Mail</label>
+                <input id="auth-business-email" type="email" placeholder="work@company.com" />
+              </div>
+              <div class="field">
+                <label for="auth-business-phone">Phone</label>
+                <input id="auth-business-phone" type="tel" placeholder="Business phone number" />
+              </div>
+            </div>
+
+            <!-- Row 3: Type & Designation -->
+            <div class="form__row" style="margin-top: var(--space-4);">
+              <div class="field">
+                <label for="auth-business-type">Type</label>
+                <input id="auth-business-type" type="text" placeholder="e.g. Startup, Agency, Enterprise" />
+              </div>
+              <div class="field">
+                <label for="auth-business-designation">Designation</label>
+                <input id="auth-business-designation" type="text" placeholder="e.g. Founder, CEO, Director" />
+              </div>
             </div>
           </div>
+          <!-- ==================== [Box 2 End] ==================== -->
 
-          <!-- Age confirmation (Sign Up only) -->
-          <div id="row-age" class="field field--check" style="margin-top: var(--space-2);">
-            <input id="auth-age" type="checkbox" />
-            <label for="auth-age">I confirm I am 18 years of age or older *</label>
+          <!-- ==================== [Box 3 Start] Legal and Privacy Info ==================== -->
+          <div id="box-legal" class="auth-box">
+            <h3 class="auth-box__title">Legal and Privacy Info</h3>
+
+            <!-- Date of Birth -->
+            <div class="field" style="max-width: 320px;">
+              <label for="auth-dob">Date of Birth *</label>
+              <input id="auth-dob" type="date" />
+            </div>
+
+            <!-- Confirm you are over 18 -->
+            <div class="field field--check" style="margin-top: var(--space-4);">
+              <input id="auth-age" type="checkbox" />
+              <label for="auth-age">Confirm you are over 18 *</label>
+            </div>
+
+            <!-- Confirm you agree to our Privacy Policy -->
+            <div class="field field--check" style="margin-top: var(--space-3);">
+              <input id="auth-priv" type="checkbox" />
+              <label for="auth-priv">Confirm you agree to our <a href="/frontend/pages/legal.html" target="_blank" style="text-decoration: underline;">Privacy Policy &amp; Terms</a> *</label>
+            </div>
+
+            <!-- Cloudflare bot prevention Check -->
+            <div style="margin-top: var(--space-5);">
+              <label style="font-size: var(--fs-small); color: var(--fg-secondary); display: block; margin-bottom: var(--space-2);">Cloudflare bot prevention Check</label>
+              <div id="auth-turnstile" class="cf-turnstile"></div>
+            </div>
           </div>
+          <!-- ==================== [Box 3 End] ==================== -->
 
-          <!-- Terms acceptance (Sign Up only) -->
-          <div id="row-priv" class="field field--check">
-            <input id="auth-priv" type="checkbox" />
-            <label for="auth-priv">I have read and accept the <a href="/frontend/pages/legal.html" target="_blank" style="text-decoration: underline;">Terms &amp; Conditions</a> *</label>
+          <!-- [Reset Button]  [Sign Up Button] -->
+          <div id="auth-actions" style="display: flex; gap: var(--space-4); justify-content: flex-end; align-items: center; margin-top: var(--space-2);">
+            <button id="auth-reset" class="btn btn--ghost" type="reset" data-cursor-hover>Reset</button>
+            <button id="auth-submit" class="btn btn--primary" type="submit" data-cursor-hover>Sign Up</button>
           </div>
-
-          <!-- Submit Button -->
-          <button id="auth-submit" class="btn btn--primary" type="submit" style="width: 100%; justify-content: center; margin-top: var(--space-4);" data-cursor-hover>
-            Create Account
-          </button>
 
           <!-- Divider -->
-          <div style="display: flex; align-items: center; gap: var(--space-4); margin: var(--space-4) 0;">
+          <div id="auth-alt-divider" style="display: flex; align-items: center; gap: var(--space-4); margin: var(--space-6) 0 var(--space-4);">
             <div style="flex: 1; height: 1px; background: var(--border-hairline);"></div>
             <span style="font-size: var(--fs-micro); color: var(--fg-muted); text-transform: uppercase;">or</span>
             <div style="flex: 1; height: 1px; background: var(--border-hairline);"></div>
@@ -140,9 +203,11 @@
           </button>
 
           <!-- Forgot Password Link -->
-          <button id="auth-forgot" class="link-btn" type="button" style="text-align: center; margin-top: var(--space-3); border: none; background: none; cursor: pointer;" data-cursor-hover>
-            Forgot your password?
-          </button>
+          <div id="auth-forgot-wrap" style="text-align: center; margin-top: var(--space-3); display: none;">
+            <button id="auth-forgot" class="link-btn" type="button" style="border: none; background: none; cursor: pointer;" data-cursor-hover>
+              Forgot your password?
+            </button>
+          </div>
         </form>
 
         <!-- Post-Auth Redirect State -->
