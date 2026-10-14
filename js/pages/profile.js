@@ -169,4 +169,19 @@ onAuth(async (user) => {
       deleteBtn.disabled = false;
     }
   };
+
+  // Support direct hash navigation from footer (#data, #delete)
+  function handleHash() {
+    const hash = window.location.hash.toLowerCase();
+    if (hash === "#data" || hash === "#download") {
+      exportBtn?.scrollIntoView({ behavior: "smooth", block: "center" });
+      exportBtn?.focus();
+    } else if (hash === "#delete" || hash === "#danger") {
+      deleteBtn?.scrollIntoView({ behavior: "smooth", block: "center" });
+      deleteBtn?.focus();
+    }
+  }
+
+  setTimeout(handleHash, 250);
+  window.addEventListener("hashchange", handleHash);
 });

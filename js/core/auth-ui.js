@@ -45,6 +45,37 @@ document.addEventListener("click", (e) => {
   }
 });
 
+/**
+ * Dynamically updates the footer auth link:
+ * - "Sign Out" when user is authenticated (clicking logs them out).
+ * - "Sign Up" when user is signed out (navigates to auth.html).
+ */
+export function updateFooterAuth(user) {
+  const footerAuth = document.getElementById("footer-auth-link");
+  if (!footerAuth) return;
+  if (user) {
+    footerAuth.textContent = "Sign Out";
+    footerAuth.href = "#signout";
+    footerAuth.onclick = async (e) => {
+      e.preventDefault();
+      try {
+        await logOut();
+      } catch (err) {
+        console.warn("Could not log out:", err);
+      }
+      window.location.reload();
+    };
+  } else {
+    footerAuth.textContent = "Sign Up";
+    footerAuth.href = "/frontend/pages/auth.html";
+    footerAuth.onclick = null;
+  }
+}
+
+document.addEventListener("partials:ready", () => {
+  updateFooterAuth(currentAuthUser);
+});
+
 function whenNavReady(fn) {
   if (document.querySelector(".site-nav")) {
     fn();
@@ -109,6 +140,7 @@ whenNavReady(() => {
       authReadyResolver(user);
     }
     window.__authResolved = true;
+    updateFooterAuth(user);
     clearInterval(poll); unsubSignal?.(); unsubSignal = null; closeMenu();
     const links = nav.querySelector(".site-nav__links");
     const existingAdmin = links?.querySelector(".nav-admin-item");

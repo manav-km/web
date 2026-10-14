@@ -55,8 +55,28 @@
         </div>
       </div>
 
-      <!-- Center: Empty spacer -->
-      <div class="site-footer__spacer" aria-hidden="true"></div>
+      <!-- Center: Privacy & Data -->
+      <div class="site-footer__col site-footer__col--center">
+        <h3 class="site-footer__heading">Privacy &amp; Data:</h3>
+        <div class="site-footer__grid-1col">
+          <a class="page-pill" href="/frontend/pages/legal.html" data-cursor-hover>
+            <span class="bullet">›</span>
+            <span>Policies</span>
+          </a>
+          <a class="page-pill" href="/frontend/pages/profile.html" data-cursor-hover>
+            <span class="bullet">›</span>
+            <span>Profile</span>
+          </a>
+          <a class="page-pill" href="/frontend/pages/profile.html#data" data-cursor-hover>
+            <span class="bullet">›</span>
+            <span>Download Data</span>
+          </a>
+          <a class="page-pill page-pill--danger" href="/frontend/pages/profile.html#delete" data-cursor-hover>
+            <span class="bullet">›</span>
+            <span>Delete Data</span>
+          </a>
+        </div>
+      </div>
 
       <!-- Right: Pages -->
       <div class="site-footer__col site-footer__col--pages">
@@ -108,9 +128,12 @@
     <!-- Horizontal Divider Line -->
     <hr class="site-footer__divider" />
 
-    <!-- Copyright Line -->
+    <!-- Footer Meta: Copyright on left/center, Sign In/Out on right -->
     <div class="site-footer__meta">
       <p class="site-footer__copyright">&copy; <span id="footer-year"></span> Manav Kumar Mishra. All rights reserved.</p>
+      <div class="site-footer__auth">
+        <a id="footer-auth-link" class="footer-auth-link" href="/frontend/pages/auth.html" data-cursor-hover>Sign Up</a>
+      </div>
     </div>
   </div>
 </footer>
