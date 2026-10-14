@@ -5,7 +5,7 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-  signInWithPopup, GoogleAuthProvider, signOut, sendEmailVerification, sendPasswordResetEmail,
+  signInWithPopup, GoogleAuthProvider, OAuthProvider, signOut, sendEmailVerification, sendPasswordResetEmail,
   updateProfile,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { FIREBASE_CONFIG } from "./config.js";
@@ -28,7 +28,25 @@ export async function signUp(email, password) {
   return cred;
 }
 export const setUserProfile = (user, data) => updateProfile(user, data);
+
+// OAuth Providers
 export const signInGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
+
+export const signInApple = () => {
+  const provider = new OAuthProvider("apple.com");
+  provider.addScope("email");
+  provider.addScope("name");
+  return signInWithPopup(auth, provider);
+};
+
+export const signInMicrosoft = () => {
+  const provider = new OAuthProvider("microsoft.com");
+  provider.setCustomParameters({
+    prompt: "select_account",
+  });
+  return signInWithPopup(auth, provider);
+};
+
 export const resetPassword = (email) => sendPasswordResetEmail(auth, email);
 export const logOut = () => signOut(auth);
 export const resendVerification = (user) => sendEmailVerification(user);
@@ -43,7 +61,12 @@ export function friendlyAuthError(err) {
     "auth/invalid-email": "That email address doesn't look right.",
     "auth/too-many-requests": "Too many attempts. Please wait a moment and try again.",
     "auth/popup-closed-by-user": "Sign-in was cancelled.",
+    "auth/cancelled-popup-request": "Sign-in was cancelled.",
+    "auth/popup-blocked": "Popup was blocked by your browser. Please allow popups for this site.",
     "auth/network-request-failed": "Network error. Check your connection.",
+    "auth/account-exists-with-different-credential": "An account already exists with this email address using a different sign-in method.",
+    "auth/operation-not-allowed": "This sign-in provider is not enabled yet in your Firebase Console. Please enable it under Authentication > Sign-in method.",
+    "auth/unauthorized-domain": "This domain is not authorized for OAuth in the Firebase Console.",
   };
-  return map[err?.code] || "Couldn't sign you in. Please try again.";
+  return map[err?.code] || err?.message || "Couldn't sign you in. Please try again.";
 }

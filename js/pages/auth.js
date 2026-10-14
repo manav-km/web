@@ -2,7 +2,10 @@
  * auth.js (page script) — Handles authentication logic on the dedicated /frontend/pages/auth.html page.
  * Formatted with neat multi-box sections: Box 1 (Personal Info), Box 2 (Business Info), Box 3 (Legal & Privacy).
  */
-import { onAuth, signIn, signUp, signInGoogle, resetPassword, friendlyAuthError, setUserProfile, logOut } from "../core/auth.js";
+import {
+  onAuth, signIn, signUp, signInGoogle, signInApple, signInMicrosoft,
+  resetPassword, friendlyAuthError, setUserProfile, logOut
+} from "../core/auth.js";
 import { api, h } from "../core/api.js";
 import { TURNSTILE_SITE_KEY } from "../core/config.js";
 
@@ -327,38 +330,39 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
     }
   });
 
-  // Google sign in
-  btnGoogle.addEventListener("click", async () => {
+  // Helper for OAuth sign-in flow (Google, Apple, Microsoft)
+  async function handleOAuthSignIn(providerName, signInFn) {
     clearAlert();
     if (mode === "signup" && (!checkAge.checked || !checkPriv.checked)) {
-      showAlert("Please confirm you are over 18 and accept the Privacy Policy before continuing with Google.");
+      showAlert(`Please confirm you are over 18 and accept the Privacy Policy before continuing with ${providerName}.`);
       return;
     }
 
     try {
-      await signInGoogle();
+      const res = await signInFn();
       if (checkAge.checked && checkPriv.checked) {
         await api("/auth/confirm-age", { method: "POST", body: { age_confirmed: true, privacy_accepted: true }, auth: true }).catch(() => {});
       }
-      showAlert("Signed in with Google! Redirecting...", true);
+      showAlert(`Signed in with ${providerName}! Redirecting...`, true);
       finishRedirect();
     } catch (err) {
       showAlert(friendlyAuthError(err));
     }
-  });
-
-  // Apple sign in placeholder
-  if (btnApple) {
-    btnApple.addEventListener("click", () => {
-      showAlert("Apple sign-in configuration is coming soon. Please use Google or the registration form below.", false);
-    });
   }
 
-  // Microsoft sign in placeholder
+  // Google sign in
+  if (btnGoogle) {
+    btnGoogle.addEventListener("click", () => handleOAuthSignIn("Google", signInGoogle));
+  }
+
+  // Apple sign in
+  if (btnApple) {
+    btnApple.addEventListener("click", () => handleOAuthSignIn("Apple", signInApple));
+  }
+
+  // Microsoft sign in
   if (btnMicrosoft) {
-    btnMicrosoft.addEventListener("click", () => {
-      showAlert("Microsoft sign-in configuration is coming soon. Please use Google or the registration form below.", false);
-    });
+    btnMicrosoft.addEventListener("click", () => handleOAuthSignIn("Microsoft", signInMicrosoft));
   }
 
   // Password reset
