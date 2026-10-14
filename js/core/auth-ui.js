@@ -49,6 +49,7 @@ whenNavReady(() => {
   });
 
   onAuth(async (user) => {
+    window.__authResolved = true;
     clearInterval(poll); unsubSignal?.(); unsubSignal = null; closeMenu();
     const links = nav.querySelector(".site-nav__links");
     const existingAdmin = links?.querySelector(".nav-admin-item");

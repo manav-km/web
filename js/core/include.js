@@ -47,6 +47,10 @@ function initNav() {
     });
   }
 
-  // Auth-state UI (sign-in button vs. bell + profile picture) is managed
-  // by auth-ui.js once Firebase Auth restores the session state.
+  // Auth-state UI: default to showing Sign In button until auth-ui resolves
+  const signIn = nav.querySelector(".site-nav__signin");
+  if (signIn && !window.__authResolved) {
+    signIn.classList.add("is-ready");
+    signIn.style.display = "inline-flex";
+  }
 }

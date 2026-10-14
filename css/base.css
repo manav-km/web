@@ -25,9 +25,14 @@ body {
   min-height: 100vh;
 }
 
-main, #main-content, .site-nav, .site-footer, [data-include="nav"], [data-include="footer"] {
+main, #main-content, .site-footer, [data-include="footer"] {
   position: relative;
   z-index: 1;
+}
+
+[data-include="nav"] {
+  position: relative;
+  z-index: var(--z-nav, 100);
 }
 
 img, svg, video { max-width: 100%; display: block; }
