@@ -63,7 +63,10 @@ async def harden(request: Request, call_next):
 @app.exception_handler(Exception)
 async def unhandled(request: Request, exc: Exception):
     logger.exception("Unhandled error on %s %s", request.method, request.url.path)
-    return JSONResponse({"detail": f"{type(exc).__name__}: {str(exc)}"}, status_code=500)
+    k = settings.supabase_service_role_key or ""
+    u = settings.supabase_url or ""
+    diag = f"url={u}, key_len={len(k)}, prefix={k[:6]}...{k[-4:] if len(k) > 4 else ''}"
+    return JSONResponse({"detail": f"{type(exc).__name__}: {str(exc)} [{diag}]"}, status_code=500)
 
 
 for module in (

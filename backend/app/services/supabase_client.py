@@ -12,7 +12,14 @@ from supabase import Client, create_client
 from app.core.config import get_settings
 
 
+import logging
+
+logger = logging.getLogger("app.supabase")
+
 @lru_cache
 def get_supabase() -> Client:
     settings = get_settings()
-    return create_client(settings.supabase_url, settings.supabase_service_role_key)
+    url = settings.supabase_url.strip()
+    key = settings.supabase_service_role_key.strip()
+    logger.info("Initializing Supabase client: url=%s, key_len=%d, key_prefix=%s", url, len(key), key[:10] if key else "EMPTY")
+    return create_client(url, key)
