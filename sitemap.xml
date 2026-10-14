@@ -8,6 +8,8 @@
   <url><loc>https://manav-km.dev/frontend/pages/uploads.html</loc></url>
   <url><loc>https://manav-km.dev/frontend/pages/blog.html</loc></url>
   <url><loc>https://manav-km.dev/frontend/pages/connect.html</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/auth.html</loc></url>
+  <url><loc>https://manav-km.dev/frontend/pages/profile.html</loc></url>
   <url><loc>https://manav-km.dev/frontend/pages/legal.html</loc></url>
   <!-- /blog/<slug> entries should be generated server-side once posts exist -->
   </urlset>

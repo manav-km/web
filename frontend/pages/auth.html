@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="/js/core/https.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Account — Sign In &amp; Sign Up — Manav-KM</title>
+  <meta name="description" content="Sign in or create your Manav-KM client account." />
+  <meta property="og:title" content="Account — Sign In &amp; Sign Up — Manav-KM" />
+  <meta property="og:description" content="Sign in or create your Manav-KM client account." />
+  <meta property="og:image" content="https://manav-km.dev/assets/branding/banner.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://manav-km.dev/frontend/pages/auth.html" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/branding/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/branding/favicon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/branding/favicon-180.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+</head>
+<body>
+  <a class="sr-only" href="#main-content">Skip to content</a>
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atmosphere__orb atmosphere__orb--red"></div>
+    <div class="atmosphere__orb atmosphere__orb--blue"></div>
+  </div>
+
+  <div data-include="nav">
+    <noscript>
+      <nav aria-label="Primary">
+        <a href="/">Home</a> ·
+        <a href="/frontend/pages/about.html">About Me</a> ·
+        <a href="/frontend/pages/projects.html">Projects</a> ·
+        <a href="/frontend/pages/repositories.html">Repositories</a> ·
+        <a href="/frontend/pages/achievements.html">Achievements</a> ·
+        <a href="/frontend/pages/uploads.html">Uploads</a> ·
+        <a href="/frontend/pages/blog.html">Blog</a> ·
+        <a href="/frontend/pages/connect.html">Connect</a>
+      </nav>
+    </noscript>
+  </div>
+
+  <main id="main-content">
+    <header class="page-hero">
+      <h1 class="page-hero__title" id="auth-heading">ACCOUNT ACCESS</h1>
+      <p class="page-hero__subtitle" id="auth-subheading">Sign in to your account or create a new one to access the client portal.</p>
+    </header>
+
+    <section class="container" style="max-width: 520px; margin-bottom: var(--space-24);">
+      <!-- Card Container for Auth -->
+      <div class="card" style="padding: var(--space-8);">
+        <!-- Mode Switcher Tabs -->
+        <div class="filters" style="margin-bottom: var(--space-6); justify-content: stretch; display: grid; grid-template-columns: 1fr 1fr;">
+          <button id="tab-signin" class="filter" type="button" aria-pressed="false" style="text-align: center; border-radius: var(--radius-sm);" data-cursor-hover>Sign In</button>
+          <button id="tab-signup" class="filter" type="button" aria-pressed="true" style="text-align: center; border-radius: var(--radius-sm);" data-cursor-hover>Create Account</button>
+        </div>
+
+        <div id="auth-alert" role="alert" style="margin-bottom: var(--space-4);"></div>
+
+        <form id="auth-form" class="form form--full" novalidate>
+          <!-- Full Name (Sign Up only) -->
+          <div id="row-name" class="field">
+            <label for="auth-name">Full Name *</label>
+            <input id="auth-name" type="text" autocomplete="name" placeholder="Your Full Name" />
+          </div>
+
+          <!-- Email -->
+          <div class="field">
+            <label for="auth-email">Email Address *</label>
+            <input id="auth-email" type="email" autocomplete="email" required placeholder="name@example.com" />
+          </div>
+
+          <!-- Password -->
+          <div class="field">
+            <label for="auth-pass">Password *</label>
+            <input id="auth-pass" type="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters" />
+          </div>
+
+          <!-- Age confirmation (Sign Up only) -->
+          <div id="row-age" class="field field--check" style="margin-top: var(--space-2);">
+            <input id="auth-age" type="checkbox" />
+            <label for="auth-age">I confirm I am 18 years of age or older *</label>
+          </div>
+
+          <!-- Terms acceptance (Sign Up only) -->
+          <div id="row-priv" class="field field--check">
+            <input id="auth-priv" type="checkbox" />
+            <label for="auth-priv">I have read and accept the <a href="/frontend/pages/legal.html" target="_blank" style="text-decoration: underline;">Terms &amp; Conditions</a> *</label>
+          </div>
+
+          <!-- Submit Button -->
+          <button id="auth-submit" class="btn btn--primary" type="submit" style="width: 100%; justify-content: center; margin-top: var(--space-4);" data-cursor-hover>
+            Create Account
+          </button>
+
+          <!-- Divider -->
+          <div style="display: flex; align-items: center; gap: var(--space-4); margin: var(--space-4) 0;">
+            <div style="flex: 1; height: 1px; background: var(--border-hairline);"></div>
+            <span style="font-size: var(--fs-micro); color: var(--fg-muted); text-transform: uppercase;">or</span>
+            <div style="flex: 1; height: 1px; background: var(--border-hairline);"></div>
+          </div>
+
+          <!-- Google Auth Button -->
+          <button id="auth-google" class="btn btn--ghost" type="button" style="width: 100%; justify-content: center; display: inline-flex; align-items: center;" data-cursor-hover>
+            <svg width="18" height="18" viewBox="0 0 24 24" style="margin-right: 10px;" aria-hidden="true">
+              <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+              <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+              <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3L1.9 7.3C.7 9.7 0 12 0 12s.7 2.3 1.9 4.7l3.7-1.9z"/>
+              <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.7C3.7 20.4 7.5 23 12 23z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <!-- Forgot Password Link -->
+          <button id="auth-forgot" class="link-btn" type="button" style="text-align: center; margin-top: var(--space-3); border: none; background: none; cursor: pointer;" data-cursor-hover>
+            Forgot your password?
+          </button>
+        </form>
+
+        <!-- Post-Auth Redirect State -->
+        <div id="auth-signed-in" style="display: none; text-align: center; padding: var(--space-6) 0;">
+          <p style="color: var(--status-success); margin-bottom: var(--space-4);">You are already signed in!</p>
+          <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
+            <a class="btn btn--primary" href="/frontend/pages/profile.html" data-cursor-hover>My Profile</a>
+            <a class="btn btn--ghost" href="/frontend/pages/connect.html" data-cursor-hover>Client Portal</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="footer">
+    <noscript>
+      <footer>
+        <a href="https://github.com/manav-km">GitHub</a> ·
+        <a href="https://www.linkedin.com/in/manav-krm/">LinkedIn</a> ·
+        <a href="/frontend/pages/legal.html">Terms &amp; Conditions</a>
+      </footer>
+    </noscript>
+  </div>
+
+  <script src="/js/core/include.js" defer></script>
+  <script src="/js/core/footer-year.js" defer></script>
+  <script src="/js/core/cursor.js" defer></script>
+  <script src="/js/core/transitions.js" defer></script>
+  <script src="/js/core/motion.js" defer></script>
+  <script src="/js/core/atmosphere.js" defer></script>
+  <script type="module" src="/js/core/auth-ui.js"></script>
+  <script type="module" src="/js/pages/auth.js"></script>
+  <script type="module" src="/js/core/analytics.js"></script>
+  <script type="module" src="/js/core/consent-banner.js"></script>
+</body>
+</html>
