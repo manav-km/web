@@ -10,8 +10,26 @@ import { listenSignal } from "./rtdb.js";
 let menu = null;
 
 function whenNavReady(fn) {
-  if (document.querySelector(".site-nav")) fn();
-  else document.addEventListener("partials:ready", fn, { once: true });
+  if (document.querySelector(".site-nav")) {
+    fn();
+    return;
+  }
+  const handler = () => {
+    if (document.querySelector(".site-nav")) {
+      document.removeEventListener("partials:ready", handler);
+      fn();
+    }
+  };
+  document.addEventListener("partials:ready", handler);
+  // Also poll shortly just in case partials:ready fired before listener registered
+  const interval = setInterval(() => {
+    if (document.querySelector(".site-nav")) {
+      clearInterval(interval);
+      document.removeEventListener("partials:ready", handler);
+      fn();
+    }
+  }, 30);
+  setTimeout(() => clearInterval(interval), 5000);
 }
 
 whenNavReady(() => {

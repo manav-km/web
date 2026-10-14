@@ -126,10 +126,6 @@
 
 .site-nav__menu-toggle { display: none; }
 
-@media (max-width: 860px) {
-  .site-nav__links { display: none; }
-  .site-nav__menu-toggle { display: inline-flex; }
-}
 
 /* -------------------------------------------------------------- Buttons -- */
 .btn {
@@ -416,6 +412,7 @@
    missing — the toggle had no effect).
    =================================================================== */
 @media (max-width: 860px) {
+  .site-nav__menu-toggle { display: inline-flex; }
   .site-nav__links {
     display: flex;
     flex-direction: column;

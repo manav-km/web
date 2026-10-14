@@ -2,7 +2,7 @@
  * auth.js — Firebase Authentication (client side). Firebase is the ONLY auth system.
  * The backend re-verifies every ID token; nothing here is trusted for authorization.
  */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   signInWithPopup, GoogleAuthProvider, signOut, sendEmailVerification, sendPasswordResetEmail,
@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { FIREBASE_CONFIG } from "./config.js";
 
-const app = initializeApp(FIREBASE_CONFIG);
+const app = getApps().length > 0 ? getApps()[0] : initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 
 export const currentUser = () => auth.currentUser;
