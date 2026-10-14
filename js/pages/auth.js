@@ -2,7 +2,7 @@
  * auth.js (page script) — Handles authentication logic on the dedicated /frontend/pages/auth.html page.
  * Formatted with neat multi-box sections: Box 1 (Personal Info), Box 2 (Business Info), Box 3 (Legal & Privacy).
  */
-import { onAuth, signIn, signUp, signInGoogle, resetPassword, friendlyAuthError, setUserProfile } from "../core/auth.js";
+import { onAuth, signIn, signUp, signInGoogle, resetPassword, friendlyAuthError, setUserProfile, logOut } from "../core/auth.js";
 import { api, h } from "../core/api.js";
 import { TURNSTILE_SITE_KEY } from "../core/config.js";
 
@@ -12,7 +12,9 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
   const tabIn = document.getElementById("tab-signin");
   const tabUp = document.getElementById("tab-signup");
   const form = document.getElementById("auth-form");
-  const signedInBox = document.getElementById("auth-signed-in");
+  const sessionBanner = document.getElementById("auth-current-session");
+  const sessionEmail = document.getElementById("session-user-email");
+  const btnSignOut = document.getElementById("btn-session-signout");
   const alertBox = document.getElementById("auth-alert");
 
   // Box containers
@@ -384,13 +386,33 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
     }, 900);
   }
 
-  // Handle active session if user is already signed in
+  // Wire up Sign Out button for active session banner
+  if (btnSignOut) {
+    btnSignOut.addEventListener("click", async () => {
+      btnSignOut.disabled = true;
+      btnSignOut.textContent = "Signing out...";
+      try {
+        await logOut();
+        if (sessionBanner) sessionBanner.style.display = "none";
+        showAlert("You have been signed out.", true);
+      } catch (err) {
+        showAlert(friendlyAuthError(err));
+      } finally {
+        btnSignOut.disabled = false;
+        btnSignOut.textContent = "Sign Out";
+      }
+    });
+  }
+
+  // Handle active session: inform user without hiding the form
   onAuth((user) => {
-    if (user && !form.dataset.submitting) {
-      form.style.display = "none";
-      signedInBox.style.display = "block";
-      heading.textContent = "ACCOUNT READY";
-      subheading.textContent = `Signed in as ${user.displayName || user.email}`;
+    if (user && sessionBanner) {
+      sessionBanner.style.display = "flex";
+      if (sessionEmail) {
+        sessionEmail.textContent = user.displayName ? `${user.displayName} (${user.email})` : user.email;
+      }
+    } else if (sessionBanner) {
+      sessionBanner.style.display = "none";
     }
   });
 })();

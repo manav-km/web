@@ -55,6 +55,17 @@
     <section class="container" style="max-width: 760px; margin-bottom: var(--space-24);">
       <!-- Card Container for Auth -->
       <div class="card" style="padding: var(--space-8);">
+        <!-- Active Session Banner (shown only if a session is currently active) -->
+        <div id="auth-current-session" style="display: none; background: var(--bg-surface); border: 1px solid var(--border-hairline); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-6); align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap;">
+          <span style="font-size: var(--fs-small); color: var(--fg-secondary);">
+            Signed in as <strong id="session-user-email" style="color: var(--fg-primary);"></strong>
+          </span>
+          <div style="display: flex; gap: var(--space-2); align-items: center;">
+            <a class="btn btn--ghost btn--sm" href="/frontend/pages/connect.html" data-cursor-hover>Go to Connect</a>
+            <button id="btn-session-signout" class="btn btn--danger btn--sm" type="button" data-cursor-hover>Sign Out</button>
+          </div>
+        </div>
+
         <!-- Social OAuth Sign-In (Google, Apple, Microsoft) -->
         <div class="oauth-grid">
           <button id="auth-google" class="btn btn--ghost oauth-btn" type="button" data-cursor-hover>
@@ -228,15 +239,6 @@
             </button>
           </div>
         </form>
-
-        <!-- Post-Auth Redirect State -->
-        <div id="auth-signed-in" style="display: none; text-align: center; padding: var(--space-6) 0;">
-          <p style="color: var(--status-success); margin-bottom: var(--space-4);">You are already signed in!</p>
-          <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
-            <a class="btn btn--primary" href="/frontend/pages/profile.html" data-cursor-hover>My Profile</a>
-            <a class="btn btn--ghost" href="/frontend/pages/connect.html" data-cursor-hover>Client Portal</a>
-          </div>
-        </div>
       </div>
     </section>
   </main>
