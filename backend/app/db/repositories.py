@@ -2,14 +2,23 @@
 from app.services.supabase_client import get_supabase
 
 
+def _sanitize(rows: list[dict]) -> list[dict]:
+    for r in rows:
+        if r.get("languages") is None:
+            r["languages"] = []
+    return rows
+
+
 def list_visible() -> list[dict]:
     sb = get_supabase()
-    return sb.table("repositories").select("*").eq("is_visible", True).order("stars", desc=True).execute().data
+    data = sb.table("repositories").select("*").eq("is_visible", True).order("stars", desc=True).execute().data
+    return _sanitize(data)
 
 
 def list_all_admin() -> list[dict]:
     sb = get_supabase()
-    return sb.table("repositories").select("*").order("source").order("repo_name").execute().data
+    data = sb.table("repositories").select("*").order("source").order("repo_name").execute().data
+    return _sanitize(data)
 
 
 def set_visibility(repo_id: str, is_visible: bool) -> dict:
