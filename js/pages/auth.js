@@ -14,10 +14,16 @@ import { api, h } from "../core/api.js";
   const alertBox = document.getElementById("auth-alert");
 
   const rowName = document.getElementById("row-name");
+  const rowDetails1 = document.getElementById("row-details-1");
+  const rowDetails2 = document.getElementById("row-details-2");
   const rowAge = document.getElementById("row-age");
   const rowPriv = document.getElementById("row-priv");
 
   const inputName = document.getElementById("auth-name");
+  const inputPhone = document.getElementById("auth-phone");
+  const inputCountry = document.getElementById("auth-country");
+  const inputProfession = document.getElementById("auth-profession");
+  const inputBusiness = document.getElementById("auth-business");
   const inputEmail = document.getElementById("auth-email");
   const inputPass = document.getElementById("auth-pass");
   const checkAge = document.getElementById("auth-age");
@@ -52,6 +58,8 @@ import { api, h } from "../core/api.js";
     tabUp.setAttribute("aria-pressed", String(isSignUp));
 
     rowName.style.display = isSignUp ? "grid" : "none";
+    if (rowDetails1) rowDetails1.style.display = isSignUp ? "grid" : "none";
+    if (rowDetails2) rowDetails2.style.display = isSignUp ? "grid" : "none";
     rowAge.style.display = isSignUp ? "flex" : "none";
     rowPriv.style.display = isSignUp ? "flex" : "none";
 
@@ -107,10 +115,17 @@ import { api, h } from "../core/api.js";
       } else {
         const cred = await signUp(emailVal, passVal);
         const nameVal = inputName.value.trim();
+        const profileData = {
+          full_name: nameVal || undefined,
+          phone: inputPhone.value.trim() || undefined,
+          country: inputCountry.value.trim() || undefined,
+          profession: inputProfession.value.trim() || undefined,
+          business: inputBusiness.value.trim() || undefined,
+        };
         if (nameVal) {
           await setUserProfile(cred.user, { displayName: nameVal }).catch(() => {});
-          await api("/profile", { method: "PUT", body: { full_name: nameVal }, auth: true }).catch(() => {});
         }
+        await api("/profile", { method: "PUT", body: profileData, auth: true }).catch(() => {});
         await api("/auth/confirm-age", { method: "POST", body: { age_confirmed: true, privacy_accepted: true }, auth: true }).catch(() => {});
         showAlert("Account created successfully! Redirecting...", true);
         finishRedirect();

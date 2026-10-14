@@ -81,6 +81,29 @@
             <input id="auth-pass" type="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters" />
           </div>
 
+          <!-- Additional Profile Details (Sign Up only) -->
+          <div id="row-details-1" class="form__row" style="margin-top: var(--space-2);">
+            <div class="field">
+              <label for="auth-phone">Phone Number</label>
+              <input id="auth-phone" type="tel" autocomplete="tel" placeholder="+1 (555) 000-0000" />
+            </div>
+            <div class="field">
+              <label for="auth-country">Country / Region</label>
+              <input id="auth-country" type="text" autocomplete="country-name" placeholder="e.g. India, United States" />
+            </div>
+          </div>
+
+          <div id="row-details-2" class="form__row">
+            <div class="field">
+              <label for="auth-profession">Profession / Title</label>
+              <input id="auth-profession" type="text" placeholder="e.g. Product Manager, Founder" />
+            </div>
+            <div class="field">
+              <label for="auth-business">Company / Business</label>
+              <input id="auth-business" type="text" placeholder="Your organization (optional)" />
+            </div>
+          </div>
+
           <!-- Age confirmation (Sign Up only) -->
           <div id="row-age" class="field field--check" style="margin-top: var(--space-2);">
             <input id="auth-age" type="checkbox" />
