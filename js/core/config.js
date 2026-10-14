@@ -10,7 +10,7 @@
 export const API_BASE =
   typeof location !== "undefined" && (location.hostname === "localhost" || location.hostname === "127.0.0.1")
     ? "http://localhost:8000/api/v1"
-    : "https://portfolio-api-dqgyshzydocnsnxyzumc.a.run.app/api/v1"; // Replace with your final Cloud Run service URL once deployed
+    : "https://web-wlpn.onrender.com/api/v1"; // Render backend service
 
 // Public — safe in the browser; the matching secret lives only on the backend (TURNSTILE_SECRET_KEY).
 export const TURNSTILE_SITE_KEY = "0x4AAAAAAFOkivNtITAFrg2I";
