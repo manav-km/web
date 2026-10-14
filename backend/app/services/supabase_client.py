@@ -22,4 +22,10 @@ def get_supabase() -> Client:
     url = settings.supabase_url.strip()
     key = settings.supabase_service_role_key.strip()
     logger.info("Initializing Supabase client: url=%s, key_len=%d, key_prefix=%s", url, len(key), key[:10] if key else "EMPTY")
-    return create_client(url, key)
+    client = create_client(url, key)
+    # Ensure underlying postgrest client explicitly authenticates requests with the key
+    try:
+        client.postgrest.auth(key)
+    except Exception as e:
+        logger.warning("Could not set postgrest auth: %s", e)
+    return client
