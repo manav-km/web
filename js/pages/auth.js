@@ -56,6 +56,8 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
   const btnReset = document.getElementById("auth-reset");
   const btnSubmit = document.getElementById("auth-submit");
   const btnGoogle = document.getElementById("auth-google");
+  const btnApple = document.getElementById("auth-apple");
+  const btnMicrosoft = document.getElementById("auth-microsoft");
   const btnForgot = document.getElementById("auth-forgot");
   const forgotWrap = document.getElementById("auth-forgot-wrap");
 
@@ -342,6 +344,20 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
       showAlert(friendlyAuthError(err));
     }
   });
+
+  // Apple sign in placeholder
+  if (btnApple) {
+    btnApple.addEventListener("click", () => {
+      showAlert("Apple sign-in configuration is coming soon. Please use Google or the registration form below.", false);
+    });
+  }
+
+  // Microsoft sign in placeholder
+  if (btnMicrosoft) {
+    btnMicrosoft.addEventListener("click", () => {
+      showAlert("Microsoft sign-in configuration is coming soon. Please use Google or the registration form below.", false);
+    });
+  }
 
   // Password reset
   btnForgot.addEventListener("click", async () => {
