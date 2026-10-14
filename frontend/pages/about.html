@@ -25,26 +25,177 @@
 </head>
 <body>
   <a class="sr-only" href="#main-content">Skip to content</a>
-  <div class="atmosphere" aria-hidden="true"><div class="atmosphere__orb atmosphere__orb--red"></div><div class="atmosphere__orb atmosphere__orb--blue"></div></div>
-  <div data-include="nav"><noscript><nav aria-label="Primary"><a href="/">Home</a> · <a href="/frontend/pages/about.html">About Me</a> · <a href="/frontend/pages/projects.html">Projects</a> · <a href="/frontend/pages/repositories.html">Repositories</a> · <a href="/frontend/pages/achievements.html">Achievements</a> · <a href="/frontend/pages/uploads.html">Uploads</a> · <a href="/frontend/pages/blog.html">Blog</a> · <a href="/frontend/pages/connect.html">Connect</a></nav></noscript></div>
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atmosphere__orb atmosphere__orb--red"></div>
+    <div class="atmosphere__orb atmosphere__orb--blue"></div>
+  </div>
+
+  <div data-include="nav">
+    <noscript>
+      <nav aria-label="Primary">
+        <a href="/">Home</a> ·
+        <a href="/frontend/pages/about.html">About Me</a> ·
+        <a href="/frontend/pages/projects.html">Projects</a> ·
+        <a href="/frontend/pages/repositories.html">Repositories</a> ·
+        <a href="/frontend/pages/achievements.html">Achievements</a> ·
+        <a href="/frontend/pages/uploads.html">Uploads</a> ·
+        <a href="/frontend/pages/blog.html">Blog</a> ·
+        <a href="/frontend/pages/connect.html">Connect</a>
+      </nav>
+    </noscript>
+  </div>
+
   <main id="main-content">
-    <header class="page-hero"><h1 class="page-hero__title">ABOUT ME</h1><p class="page-hero__subtitle">Here’s what you need to know about me</p></header>
-    <section class="container"><div class="prose">
-      <p>I&#x27;m Manav-KM, a developer interested in creating software, websites, and technology projects that turn ideas into useful, real-world products. My work spans web development, applications, AI, automation, APIs, robotics, and hardware.</p>
-      <p>My strongest area is frontend development. I primarily work with HTML, CSS, and JavaScript, with a particular interest in interactive interfaces, responsive design, animation, and visual detail. I enjoy creating interfaces that feel complete and purposeful rather than simply making something that works.</p>
-      <p>My work also extends into the systems behind those interfaces. I work with Python, Firebase, Firestore, APIs, authentication, and AI integrations, and I&#x27;m continuing to develop my backend skills with technologies such as FastAPI and PostgreSQL. This has given me experience connecting different parts of an application and understanding how they work together as a complete system.</p>
-      <p>Some of the software projects I&#x27;ve worked on include NexBoard, a classroom-oriented digital whiteboard application; Library; VelvetBites; AeroVent; Dnmx Central Command; and Dnmx Tactical Command. Each project has explored different problems, technologies, and approaches to software development.</p>
-      <p>I&#x27;m particularly interested in AI and automation. Beyond using AI during development, I like exploring how AI can be integrated directly into applications to process information, automate repetitive work, and make software more capable.</p>
-      <p>Another major area of interest is robotics and physical computing. My projects include CROWS, an automatic fire-extinguishing car, and a handheld AI-powered farming station. These projects let me work with hardware, sensors, automation, and software while solving problems outside the traditional software environment.</p>
-      <p>I also have a strong preference for creating free-to-use applications whenever possible. I like building software that people can access without unnecessary barriers, especially when the project is intended to solve a practical problem or provide a useful tool.</p>
-      <p>Security is an important part of my development process as well. I pay attention to authentication, permissions, user data, APIs, and the ways an application can fail or be misused. As projects become more complex, I aim to make the underlying systems as responsible and secure as the interfaces themselves.</p>
-      <p>I place a high value on completing projects before their deadlines. I prefer to plan development around the final result, leaving enough time for implementation, testing, fixes, and final preparation rather than treating completion as something that happens at the very end.</p>
-      <p>I also enjoy learning through practical work. When a project requires a technology or concept I haven&#x27;t used before, I&#x27;m willing to learn it and apply it directly rather than avoiding the challenge. That process has helped me gradually expand from frontend development into backend systems, AI, automation, databases, and robotics.</p>
-      <p>Outside of software, I&#x27;m interested in PC projects, hardware, robotics, and technology experimentation. I enjoy understanding how systems work and exploring what can be built by combining different areas of technology.</p>
-      <p>This portfolio brings together the projects, experiments, and ideas I&#x27;ve worked on so far, along with the things I continue to learn and build.</p>
-    </div></section>
+    <header class="page-hero">
+      <h1 class="page-hero__title">ABOUT ME</h1>
+      <p class="page-hero__subtitle">Here’s what you need to know about me</p>
+    </header>
+
+    <section class="container">
+      <div class="dossier">
+        <!-- Dossier Header Card -->
+        <div class="dossier__header" data-reveal>
+          <div class="dossier__avatar">
+            <img src="/assets/branding/logo.png" alt="Manav Kumar Mishra" width="96" height="96" />
+          </div>
+          <div class="dossier__header-text">
+            <h2>Manav Kumar Mishra</h2>
+            <p class="dossier__tagline">Full-stack developer, robotics enthusiast &amp; systems builder turning ideas into real, working products.</p>
+          </div>
+        </div>
+
+        <!-- Dossier Item Grid -->
+        <div class="dossier__grid">
+          <!-- 1. Name -->
+          <div class="dossier__card" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Name</span>
+              <div class="dossier__value">Manav Kumar Mishra (Manav-KM)</div>
+            </div>
+          </div>
+
+          <!-- 2. Date Of Birth -->
+          <div class="dossier__card" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Date Of Birth</span>
+              <div class="dossier__value">16 October 2007</div>
+            </div>
+          </div>
+
+          <!-- 3. Where I Live -->
+          <div class="dossier__card" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Where I Live</span>
+              <div class="dossier__value">Lucknow, Uttar Pradesh, India</div>
+            </div>
+          </div>
+
+          <!-- 4. Education -->
+          <div class="dossier__card" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Education</span>
+              <div class="dossier__value">City Montessori School (CMS), Lucknow — Science &amp; Computer Science</div>
+            </div>
+          </div>
+
+          <!-- 5. Hobbies -->
+          <div class="dossier__card" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Hobbies</span>
+              <div class="dossier__value">Robotics, PC Hardware &amp; Custom Rigs, Technology Experimentation, Open-Source Tools</div>
+            </div>
+          </div>
+
+          <!-- 6. Specialities -->
+          <div class="dossier__card" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Specialities</span>
+              <div class="dossier__value">Frontend Engineering, Python / FastAPI Backends, Firebase &amp; Supabase, AI Integrations &amp; Automation, Embedded Systems</div>
+            </div>
+          </div>
+
+          <!-- 7. Famous Quotes -->
+          <div class="dossier__card" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Famous Quotes</span>
+              <div class="dossier__value">“Turning ideas into real, working systems — from the interface down to the hardware.”</div>
+            </div>
+          </div>
+
+          <!-- 8. Email -->
+          <div class="dossier__card" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Email</span>
+              <div class="dossier__value"><a href="mailto:manavkmlko@gmail.com">manavkmlko@gmail.com</a></div>
+            </div>
+          </div>
+
+          <!-- 9. Phone No. -->
+          <div class="dossier__card" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Phone No.</span>
+              <div class="dossier__value">Available upon request via <a href="/frontend/pages/connect.html">Connect</a></div>
+            </div>
+          </div>
+
+          <!-- 10. Bio (Detailed) -->
+          <div class="dossier__card dossier__card--full" data-reveal>
+            <div class="dossier__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            </div>
+            <div class="dossier__info">
+              <span class="dossier__label">Bio</span>
+              <div class="dossier__bio">
+                <p>I’m Manav-KM, a developer interested in creating software, websites, and technology projects that turn ideas into useful, real-world products. My work spans web development, applications, AI, automation, APIs, robotics, and hardware.</p>
+                <p>My strongest area is frontend development. I primarily work with HTML, CSS, and JavaScript, with a particular interest in interactive interfaces, responsive design, animation, and visual detail. I enjoy creating interfaces that feel complete and purposeful rather than simply making something that works.</p>
+                <p>My work also extends into the systems behind those interfaces. I work with Python, Firebase, Firestore, APIs, authentication, and AI integrations, continuing to develop backend architectures with technologies such as FastAPI and PostgreSQL.</p>
+                <p>Some of the software projects I’ve built include NexBoard (a classroom-oriented digital whiteboard application), Library, VelvetBites, AeroVent, Dnmx Central Command, and Dnmx Tactical Command. In robotics, my projects include CROWS (Crowd Risk Observation and Warning System) and an automatic fire-extinguishing vehicle.</p>
+                <p>I place a high value on security, clean engineering, building accessible free tools whenever possible, and delivering finished projects well ahead of deadlines.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
-  <div data-include="footer"><noscript><footer><a href="https://github.com/manav-km">GitHub</a> · <a href="https://www.linkedin.com/in/manav-krm/">LinkedIn</a> · <a href="/frontend/pages/legal.html">Terms & Conditions</a></footer></noscript></div>
+
+  <div data-include="footer">
+    <noscript>
+      <footer>
+        <a href="https://github.com/manav-km">GitHub</a> ·
+        <a href="https://www.linkedin.com/in/manav-krm/">LinkedIn</a> ·
+        <a href="/frontend/pages/legal.html">Terms &amp; Conditions</a>
+      </footer>
+    </noscript>
+  </div>
+
   <script src="/js/core/include.js" defer></script>
   <script src="/js/core/footer-year.js" defer></script>
   <script src="/js/core/cursor.js" defer></script>
@@ -52,7 +203,6 @@
   <script src="/js/core/motion.js" defer></script>
   <script src="/js/core/atmosphere.js" defer></script>
   <script type="module" src="/js/core/auth-ui.js"></script>
-
   <script type="module" src="/js/core/analytics.js"></script>
   <script type="module" src="/js/core/consent-banner.js"></script>
 </body>

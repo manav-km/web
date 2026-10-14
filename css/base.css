@@ -21,6 +21,13 @@ body {
   line-height: var(--lh-normal);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden; /* the atmosphere layer intentionally bleeds past the edge */
+  position: relative;
+  min-height: 100vh;
+}
+
+main, #main-content, .site-nav, .site-footer, [data-include="nav"], [data-include="footer"] {
+  position: relative;
+  z-index: 1;
 }
 
 img, svg, video { max-width: 100%; display: block; }

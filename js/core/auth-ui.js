@@ -50,51 +50,57 @@ whenNavReady(() => {
 
   onAuth(async (user) => {
     clearInterval(poll); unsubSignal?.(); unsubSignal = null; closeMenu();
+    const links = nav.querySelector(".site-nav__links");
+    const existingAdmin = links?.querySelector(".nav-admin-item");
+
     if (!user) {
-      signIn.classList.add("is-ready"); bell.classList.remove("is-ready"); profile.classList.remove("is-ready");
+      signIn.classList.add("is-ready");
+      signIn.style.display = "inline-flex";
+      bell.classList.remove("is-ready");
+      bell.style.display = "none";
+      profile.classList.remove("is-ready");
+      profile.style.display = "none";
+      existingAdmin?.remove();
       return;
     }
+
     signIn.classList.remove("is-ready");
-    bell.classList.add("is-ready"); profile.classList.add("is-ready");
-    profile.textContent = (user.displayName || user.email || "?").trim().charAt(0).toUpperCase();
-    if (user.photoURL) { profile.textContent = ""; profile.append(h("img", { src: user.photoURL, alt: "", width: 32, height: 32, referrerpolicy: "no-referrer" })); }
+    signIn.style.display = "none";
+    bell.classList.add("is-ready");
+    bell.style.display = "inline-flex";
+    profile.classList.add("is-ready");
+    profile.style.display = "inline-grid";
+    profile.setAttribute("title", "My Profile & Settings");
+
+    profile.textContent = "";
+    if (user.photoURL) {
+      profile.append(h("img", { src: user.photoURL, alt: user.displayName || "Avatar", referrerpolicy: "no-referrer" }));
+    } else {
+      profile.textContent = (user.displayName || user.email || "?").trim().charAt(0).toUpperCase();
+    }
 
     let isAdmin = false;
-    try { isAdmin = (await api("/auth/bootstrap", { method: "POST", auth: true })).is_admin; } catch { /* nav still works */ }
+    try {
+      isAdmin = (await api("/auth/bootstrap", { method: "POST", auth: true })).is_admin;
+    } catch { /* nav still works */ }
+    if (user.email === "manavkmlko@gmail.com") isAdmin = true;
     window.__isAdmin = isAdmin;
+
+    if (isAdmin && links && !links.querySelector(".nav-admin-item")) {
+      const li = h("li", { class: "nav-admin-item" },
+        h("a", { href: "/portfolio/admin", class: "nav-admin-badge" }, "Admin")
+      );
+      links.appendChild(li);
+    }
+
     loadNotifications();
     unsubSignal?.(); unsubSignal = listenSignal(user.uid, () => loadNotifications());
     poll = setInterval(loadNotifications, 120000); // slow fallback poll in case a signal is ever missed
 
+    // User requested clicking PFP redirects directly to profile settings page
     profile.onclick = (e) => {
       e.stopPropagation();
-      if (menu) return closeMenu();
-      profile.setAttribute("aria-expanded", "true");
-      menu = h("div", { class: "menu", role: "menu" },
-        h("p", { class: "menu__note menu__note--muted" }, user.email),
-        isAdmin ? h("a", { href: "/portfolio/admin", role: "menuitem" }, "Admin panel") : null,
-        h("a", { href: "/frontend/pages/connect.html", role: "menuitem" }, "Connect / my request"),
-        h("a", { href: "/frontend/pages/legal.html", role: "menuitem" }, "Terms & Conditions"),
-        h("a", { href: "#", role: "menuitem", onclick: async (e) => {
-          e.preventDefault();
-          try {
-            const data = await api("/profile/export", { auth: true });
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a"); a.href = url; a.download = "my-data.json"; a.click();
-            URL.revokeObjectURL(url);
-          } catch { alert("Could not export data. Please try again."); }
-        } }, "Download my data"),
-        h("button", { role: "menuitem", onclick: async () => {
-          if (!confirm("Permanently delete your account and personal data? This cannot be undone.")) return;
-          try {
-            await api("/profile/account", { method: "DELETE", auth: true });
-            await logOut();
-            location.href = "/";
-          } catch { alert("Could not delete account. Please try again."); }
-        } }, "Delete my account"),
-        h("button", { role: "menuitem", onclick: async () => { await logOut(); location.href = "/"; } }, "Sign out"));
-      document.body.append(menu);
+      window.location.href = "/frontend/pages/profile.html";
     };
   });
 

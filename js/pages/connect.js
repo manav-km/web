@@ -1,4 +1,4 @@
-import { onAuth, signIn, signUp, signInGoogle, resetPassword, friendlyAuthError, currentUser, resendVerification } from "../core/auth.js";
+import { onAuth, signIn, signUp, signInGoogle, resetPassword, friendlyAuthError, currentUser, resendVerification, setUserProfile } from "../core/auth.js";
 import { api, h, fmtDateDay, label } from "../core/api.js";
 import { TURNSTILE_SITE_KEY } from "../core/config.js";
 import * as rtdb from "../core/rtdb.js";
@@ -15,31 +15,45 @@ function showGate() {
   if (modal) return;
   let mode = "signin";
   const msg = h("div", { role: "alert" });
-  const email = h("input", { id: "g-email", type: "email", autocomplete: "email", required: true });
-  const pass = h("input", { id: "g-pass", type: "password", autocomplete: "current-password", required: true, minlength: 8 });
+  const nameInput = h("input", { id: "g-name", type: "text", autocomplete: "name", placeholder: "Your Full Name" });
+  const email = h("input", { id: "g-email", type: "email", autocomplete: "email", required: true, placeholder: "name@example.com" });
+  const pass = h("input", { id: "g-pass", type: "password", autocomplete: "current-password", required: true, minlength: 8, placeholder: "••••••••" });
   const submit = h("button", { class: "btn btn--primary", type: "submit" }, "Sign in");
-  const tabIn = h("button", { class: "filter", type: "button", "aria-pressed": "true" }, "Sign in");
-  const tabUp = h("button", { class: "filter", type: "button", "aria-pressed": "false" }, "Create account");
+  const tabIn = h("button", { class: "filter", type: "button", "aria-pressed": "true" }, "Sign In");
+  const tabUp = h("button", { class: "filter", type: "button", "aria-pressed": "false" }, "Create Account");
   const ageCheck = h("input", { id: "g-age", type: "checkbox" });
   const privCheck = h("input", { id: "g-priv", type: "checkbox" });
+  const nameRow = h("div", { class: "field" }, h("label", { for: "g-name" }, "Full Name *"), nameInput);
   const ageRow = h("div", { class: "field field--check" }, ageCheck, h("label", { for: "g-age" }, "I confirm I am 18 years of age or older *"));
   const privRow = h("div", { class: "field field--check" }, privCheck, h("label", { for: "g-priv" }, "I have read and accept the ", h("a", { href: "/frontend/pages/legal.html", target: "_blank" }, "Terms & Conditions"), " *"));
+  nameRow.style.display = "none";
   ageRow.style.display = "none";
   privRow.style.display = "none";
 
   const setMode = (m) => {
     mode = m;
     tabIn.setAttribute("aria-pressed", String(m === "signin")); tabUp.setAttribute("aria-pressed", String(m === "signup"));
-    submit.textContent = m === "signin" ? "Sign in" : "Create account";
+    submit.textContent = m === "signin" ? "Sign In" : "Create Account";
     pass.autocomplete = m === "signin" ? "current-password" : "new-password";
+    nameRow.style.display = m === "signup" ? "grid" : "none";
     ageRow.style.display = m === "signup" ? "flex" : "none";
     privRow.style.display = m === "signup" ? "flex" : "none";
   };
   tabIn.onclick = () => setMode("signin"); tabUp.onclick = () => setMode("signup");
   const show = (text, ok = false) => msg.replaceChildren(h("p", { class: `notice ${ok ? "notice--ok" : "notice--error"}` }, text));
 
+  const googleSvg = h("span", { style: "display: inline-flex; align-items: center; margin-right: 8px;" },
+    h("svg", { width: "18", height: "18", viewBox: "0 0 24 24" },
+      h("path", { fill: "#EA4335", d: "M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z" }),
+      h("path", { fill: "#4285F4", d: "M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z" }),
+      h("path", { fill: "#FBBC05", d: "M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3L1.9 7.3C.7 9.7 0 12 0 12s.7 2.3 1.9 4.7l3.7-1.9z" }),
+      h("path", { fill: "#34A853", d: "M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.7C3.7 20.4 7.5 23 12 23z" })
+    )
+  );
+
   const form = h("form", { class: "form form--full", novalidate: true, onsubmit: async (e) => {
     e.preventDefault();
+    if (mode === "signup" && !nameInput.value.trim()) return show("Please enter your name.");
     if (!email.value || pass.value.length < 8) return show("Enter your email and a password of at least 8 characters.");
     if (mode === "signup" && (!ageCheck.checked || !privCheck.checked)) {
       return show("You must confirm you are 18+ and accept the Terms & Conditions.");
@@ -49,18 +63,23 @@ function showGate() {
       if (mode === "signin") {
         await signIn(email.value.trim(), pass.value);
       } else {
-        await signUp(email.value.trim(), pass.value);
+        const cred = await signUp(email.value.trim(), pass.value);
+        if (nameInput.value.trim()) {
+          await setUserProfile(cred.user, { displayName: nameInput.value.trim() }).catch(() => {});
+          await api("/profile", { method: "PUT", body: { full_name: nameInput.value.trim() }, auth: true }).catch(() => {});
+        }
         await api("/auth/confirm-age", { method: "POST", body: { age_confirmed: true, privacy_accepted: true }, auth: true }).catch(() => {});
       }
     }
     catch (err) { show(friendlyAuthError(err)); }
     finally { submit.disabled = false; }
   } },
+    nameRow,
     h("div", { class: "field" }, h("label", { for: "g-email" }, "Email"), email),
     h("div", { class: "field" }, h("label", { for: "g-pass" }, "Password"), pass),
     ageRow, privRow,
     msg, submit,
-    h("button", { class: "btn btn--ghost", type: "button", onclick: async () => {
+    h("button", { class: "btn btn--ghost", type: "button", style: "display: flex; align-items: center; justify-content: center;", onclick: async () => {
       if (mode === "signup" && (!ageCheck.checked || !privCheck.checked)) {
         return show("Please confirm you are 18+ and accept the Terms & Conditions before continuing with Google.");
       }
@@ -70,19 +89,21 @@ function showGate() {
           await api("/auth/confirm-age", { method: "POST", body: { age_confirmed: true, privacy_accepted: true }, auth: true }).catch(() => {});
         }
       } catch (err) { show(friendlyAuthError(err)); }
-    } }, "Continue with Google"),
-    h("button", { class: "link-btn", type: "button", onclick: async () => {
+    } }, googleSvg, "Continue with Google"),
+    h("button", { class: "link-btn", type: "button", style: "text-align: center; margin-top: var(--space-1);", onclick: async () => {
       if (!email.value) return show("Enter your email above first, then click reset again.");
       try { await resetPassword(email.value.trim()); show("If that account exists, a reset email is on its way.", true); }
       catch (err) { show(friendlyAuthError(err)); } } }, "Forgot your password?"));
 
   modal = h("div", { class: "modal-backdrop" },
     h("div", { class: "modal", role: "dialog", "aria-modal": "true", "aria-labelledby": "gate-title" },
-      h("h2", { id: "gate-title" }, "Connect requires an account"),
-      h("p", {}, "Please sign in or create an account to connect, discuss projects, and work with me. Your account is used only to manage your client information and communication through this website. Your information will not be sold or used for advertising or unrelated purposes."),
+      h("div", { style: "display: flex; justify-content: space-between; align-items: flex-start;" },
+        h("h2", { id: "gate-title" }, "Account Authentication"),
+        h("button", { type: "button", "aria-label": "Close", style: "font-size: 1.25rem; line-height: 1; opacity: 0.7;", onclick: hideGate }, "✕")),
+      h("p", { style: "font-size: var(--fs-small); color: var(--fg-secondary);" }, "Sign in or create an account to start a project, discuss requirements, and access client portal updates. Your information will never be shared or used for advertising."),
       h("div", { class: "modal__tabs" }, tabIn, tabUp), form));
   document.body.append(modal);
-  email.focus();
+  (mode === "signup" ? nameInput : email).focus();
 }
 function hideGate() {
   modal?.remove(); modal = null;

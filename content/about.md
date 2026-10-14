@@ -8,7 +8,7 @@ Some of the software projects I've worked on include NexBoard, a classroom-orien
 
 I'm particularly interested in AI and automation. Beyond using AI during development, I like exploring how AI can be integrated directly into applications to process information, automate repetitive work, and make software more capable.
 
-Another major area of interest is robotics and physical computing. My projects include CROWS, an automatic fire-extinguishing car, and a handheld AI-powered farming station. These projects let me work with hardware, sensors, automation, and software while solving problems outside the traditional software environment.
+Another major area of interest is robotics and physical computing. My projects include CROWS (Crowd Risk Observation and Warning System) and an automatic fire-extinguishing vehicle. These projects let me work with hardware, sensors, automation, and software while solving problems outside the traditional software environment.
 
 I also have a strong preference for creating free-to-use applications whenever possible. I like building software that people can access without unnecessary barriers, especially when the project is intended to solve a practical problem or provide a useful tool.
 

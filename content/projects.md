@@ -2,4 +2,4 @@
 
 Library · NexBoard · VelvetBites · AeroVent (manav-km) — Central · Tactical (trd-dnmx).
 Write real descriptions in the admin panel; nothing is published until you do.
-Robotics work mentioned in the About text (CROWS, the handheld AI farming station) can be added the same way.
+Robotics work mentioned in the About text (CROWS: Crowd Risk Observation and Warning System, and automatic fire-extinguishing vehicle) can be added the same way.

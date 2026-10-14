@@ -47,9 +47,6 @@ function initNav() {
     });
   }
 
-  // Auth-state UI (sign-in button vs. bell + profile picture) is wired up
-  // in Phase 5 once Firebase Auth is in place. Until then the nav quietly
-  // shows the signed-out state so the layout is never mid-flicker.
-  const signIn = nav.querySelector(".site-nav__signin");
-  if (signIn) signIn.classList.add("is-ready");
+  // Auth-state UI (sign-in button vs. bell + profile picture) is managed
+  // by auth-ui.js once Firebase Auth restores the session state.
 }

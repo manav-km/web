@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="/js/core/https.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Profile &amp; Settings — Manav-KM</title>
+  <meta name="description" content="Manage your client profile and account settings on Manav-KM." />
+  <meta property="og:title" content="Profile &amp; Settings — Manav-KM" />
+  <meta property="og:description" content="Manage your client profile and account settings on Manav-KM." />
+  <meta property="og:image" content="https://manav-km.dev/assets/branding/banner.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://manav-km.dev/frontend/pages/profile.html" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/branding/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/branding/favicon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/branding/favicon-180.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+</head>
+<body>
+  <a class="sr-only" href="#main-content">Skip to content</a>
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atmosphere__orb atmosphere__orb--red"></div>
+    <div class="atmosphere__orb atmosphere__orb--blue"></div>
+  </div>
+
+  <div data-include="nav">
+    <noscript>
+      <nav aria-label="Primary">
+        <a href="/">Home</a> ·
+        <a href="/frontend/pages/about.html">About Me</a> ·
+        <a href="/frontend/pages/projects.html">Projects</a> ·
+        <a href="/frontend/pages/repositories.html">Repositories</a> ·
+        <a href="/frontend/pages/achievements.html">Achievements</a> ·
+        <a href="/frontend/pages/uploads.html">Uploads</a> ·
+        <a href="/frontend/pages/blog.html">Blog</a> ·
+        <a href="/frontend/pages/connect.html">Connect</a>
+      </nav>
+    </noscript>
+  </div>
+
+  <main id="main-content">
+    <header class="page-hero">
+      <h1 class="page-hero__title">PROFILE &amp; SETTINGS</h1>
+      <p class="page-hero__subtitle">Manage your account information, personal details, and data.</p>
+    </header>
+
+    <section class="container" style="max-width: 800px; margin-bottom: var(--space-16);">
+      <div id="profile-auth-gate" class="card text-center" style="display: none; padding: var(--space-12);">
+        <h3>Sign In Required</h3>
+        <p style="margin: var(--space-4) 0 var(--space-6);">Please sign in or create an account to view and manage your profile.</p>
+        <a class="btn btn--primary" href="/frontend/pages/connect.html" data-cursor-hover>Go to Sign In</a>
+      </div>
+
+      <div id="profile-content" style="display: none;" class="prose form--full">
+        <!-- Identity Summary Card -->
+        <div class="card" style="display: flex; gap: var(--space-6); align-items: center; margin-bottom: var(--space-6);">
+          <div style="position: relative;">
+            <div id="profile-avatar-display" class="avatar" style="width: 80px; height: 80px; min-width: 80px; min-height: 80px; font-size: 2rem; border-width: 2px;">?</div>
+          </div>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;">
+              <h2 id="profile-name-header" style="font-size: var(--fs-h3); margin: 0;">Account</h2>
+              <span id="profile-admin-badge" class="badge badge--completed" style="display: none;">Admin</span>
+            </div>
+            <p id="profile-email-header" style="color: var(--fg-secondary); margin-top: var(--space-1);"></p>
+            <p id="profile-meta-header" style="font-size: var(--fs-micro); color: var(--fg-muted); margin-top: var(--space-1); font-family: var(--font-mono);"></p>
+          </div>
+        </div>
+
+        <!-- Edit Profile Form -->
+        <div class="card" style="margin-bottom: var(--space-6);">
+          <h3 style="font-size: var(--fs-body-lg); margin-bottom: var(--space-4);">Personal &amp; Contact Details</h3>
+          <form id="profile-form" class="form form--full" novalidate>
+            <div class="form__row">
+              <div class="field">
+                <label for="p-full-name">Full Name</label>
+                <input id="p-full-name" type="text" autocomplete="name" placeholder="Your Name" />
+              </div>
+              <div class="field">
+                <label for="p-phone">Phone Number</label>
+                <input id="p-phone" type="tel" autocomplete="tel" placeholder="+1 (555) 000-0000" />
+              </div>
+            </div>
+
+            <div class="form__row">
+              <div class="field">
+                <label for="p-country">Country / Region</label>
+                <input id="p-country" type="text" autocomplete="country-name" placeholder="e.g. India, United States" />
+              </div>
+              <div class="field">
+                <label for="p-profession">Profession / Title</label>
+                <input id="p-profession" type="text" placeholder="e.g. Product Manager, Engineer" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="p-business">Company / Business Name</label>
+              <input id="p-business" type="text" placeholder="Your organization or company (optional)" />
+            </div>
+
+            <div class="field">
+              <label for="p-avatar-url">Avatar Image URL (Optional)</label>
+              <input id="p-avatar-url" type="url" placeholder="https://..." />
+            </div>
+
+            <div id="profile-status-msg" role="alert" style="margin-top: var(--space-2);"></div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: var(--space-4);">
+              <button id="profile-save-btn" class="btn btn--primary" type="submit" data-cursor-hover>Save Changes</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Account Controls & Privacy Actions -->
+        <div class="card" style="border-color: var(--border-strong);">
+          <h3 style="font-size: var(--fs-body-lg); margin-bottom: var(--space-2);">Account &amp; Privacy</h3>
+          <p style="font-size: var(--fs-small); margin-bottom: var(--space-6);">Export your account records, sign out from this device, or permanently delete your client account.</p>
+
+          <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+            <button id="profile-export-btn" class="btn btn--ghost" type="button" data-cursor-hover>
+              <span>&#128190;</span> Download My Data
+            </button>
+            <button id="profile-logout-btn" class="btn btn--ghost" type="button" data-cursor-hover>
+              <span>&#128682;</span> Sign Out
+            </button>
+            <button id="profile-delete-btn" class="btn btn--ghost btn--danger" type="button" data-cursor-hover style="margin-left: auto;">
+              Delete My Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="footer">
+    <noscript>
+      <footer>
+        <a href="https://github.com/manav-km">GitHub</a> ·
+        <a href="https://www.linkedin.com/in/manav-krm/">LinkedIn</a> ·
+        <a href="/frontend/pages/legal.html">Terms &amp; Conditions</a>
+      </footer>
+    </noscript>
+  </div>
+
+  <script src="/js/core/include.js" defer></script>
+  <script src="/js/core/footer-year.js" defer></script>
+  <script src="/js/core/cursor.js" defer></script>
+  <script src="/js/core/transitions.js" defer></script>
+  <script src="/js/core/motion.js" defer></script>
+  <script src="/js/core/atmosphere.js" defer></script>
+  <script type="module" src="/js/core/auth-ui.js"></script>
+  <script type="module" src="/js/pages/profile.js"></script>
+  <script type="module" src="/js/core/analytics.js"></script>
+  <script type="module" src="/js/core/consent-banner.js"></script>
+</body>
+</html>

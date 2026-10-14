@@ -7,20 +7,41 @@
   "use strict";
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
-  if (prefersReducedMotion || isCoarsePointer) return;
+  if (prefersReducedMotion) return;
 
   const orbs = document.querySelectorAll(".atmosphere__orb");
   if (!orbs.length) return;
 
-  const MAX_SHIFT = 24; // px — kept small so it stays atmospheric, not distracting
+  const MAX_SHIFT = 40; // px displacement for tangible, atmospheric depth
+  let targetX = 0;
+  let targetY = 0;
+  let currentX = 0;
+  let currentY = 0;
+  let rafId = null;
+
+  function update() {
+    currentX += (targetX - currentX) * 0.08;
+    currentY += (targetY - currentY) * 0.08;
+
+    orbs.forEach((orb, i) => {
+      const dir = i % 2 === 0 ? 1 : -1;
+      orb.style.setProperty("--shift-x", `${(currentX * dir).toFixed(2)}px`);
+      orb.style.setProperty("--shift-y", `${(currentY * dir).toFixed(2)}px`);
+    });
+
+    if (Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
+      rafId = requestAnimationFrame(update);
+    } else {
+      rafId = null;
+    }
+  }
 
   window.addEventListener("mousemove", (e) => {
-    const xRatio = e.clientX / window.innerWidth - 0.5;
-    const yRatio = e.clientY / window.innerHeight - 0.5;
-    orbs.forEach((orb, i) => {
-      const direction = i % 2 === 0 ? 1 : -1;
-      orb.style.transform = `translate(${xRatio * MAX_SHIFT * direction}px, ${yRatio * MAX_SHIFT * direction}px)`;
-    });
+    targetX = (e.clientX / window.innerWidth - 0.5) * MAX_SHIFT;
+    targetY = (e.clientY / window.innerHeight - 0.5) * MAX_SHIFT;
+
+    if (!rafId) {
+      rafId = requestAnimationFrame(update);
+    }
   }, { passive: true });
 })();

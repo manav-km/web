@@ -6,6 +6,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   signInWithPopup, GoogleAuthProvider, signOut, sendEmailVerification, sendPasswordResetEmail,
+  updateProfile,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { FIREBASE_CONFIG } from "./config.js";
 
@@ -26,6 +27,7 @@ export async function signUp(email, password) {
   try { await sendEmailVerification(cred.user); } catch { /* non-fatal */ }
   return cred;
 }
+export const setUserProfile = (user, data) => updateProfile(user, data);
 export const signInGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
 export const resetPassword = (email) => sendPasswordResetEmail(auth, email);
 export const logOut = () => signOut(auth);
