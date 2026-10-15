@@ -22,11 +22,31 @@ const LANG_COLORS = {
   Rust: "#dea584",
 };
 
+const REPO_DESCRIPTIONS = {
+  aerovent: "Self-powered ventilated footwear platform that converts natural walking motion into continuous airflow and cooling.",
+  ailifecycle: "Interactive educational web guide demonstrating the stages and core principles of the AI project lifecycle.",
+  aiuniverse: "Curated discovery directory and comparison portal for state-of-the-art artificial intelligence tools and models.",
+  artigianoscarpa: "Luxury bespoke Italian footwear showcase and artisan custom shoe customization concept.",
+  butterandbloom: "Premium artisanal bakery & Parisian pâtisserie web platform with online ordering and custom cake requests.",
+  canvaslife: "Futuristic career exploration and simulation platform letting students test-drive career paths before deciding.",
+  "cosmic-citadel": "Interactive space encyclopedia and celestial exploration portal featuring star maps, cosmic data, and quizzes.",
+  fintrack: "Modern personal finance web app with expense tracking, income analytics, budget goals, and Firebase sync.",
+  fontforgeai: "Generative AI typography platform enabling users to describe typeface concepts and generate custom font families.",
+  fontforgeaitest: "Experimental React & Vite studio for the FontForge AI typeface engine with live vector glyph rendering.",
+  kairos: "Deep-learning knowledge mastery platform turning curiosities into visual knowledge maps and companion audio briefings.",
+  "lib.docs": "Developer documentation hub and architecture specifications for the Seth Anandram Jaipuria School Library system.",
+  library: "Comprehensive school library management platform with book discovery, student/teacher dashboards, and community discussions.",
+  nexboard: "Interactive digital whiteboard application built for intuitive classroom teaching, sketch-noting, and real-time collaboration.",
+  velvetbites: "Editorial culinary discovery and reservation platform for award-winning luxury restaurants and fine-dining experiences.",
+  web: "Personal developer portfolio and client portal with Firebase Auth, Realtime Database, and FastAPI backend.",
+};
+
 function normalizeRepo(r) {
+  const name = r.name || r.repo_name;
   return {
-    name: r.name || r.repo_name,
+    name,
     url: r.html_url || r.github_url,
-    desc: r.description || "Open-source repository on GitHub.",
+    desc: r.description || REPO_DESCRIPTIONS[name?.toLowerCase()] || "Open-source repository on GitHub.",
     lang: r.language || (r.languages?.[0]?.name) || "Code",
     stars: r.stargazers_count ?? r.stars ?? 0,
     forks: r.forks_count ?? r.forks ?? 0,
