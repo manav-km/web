@@ -20,6 +20,126 @@
 .tile__links a { color: var(--fg-primary); border-bottom: 1px solid var(--border-strong); }
 .tile__links a:hover { border-color: var(--accent-blue); }
 .langs { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--fg-secondary); }
+
+/* ---------- Repo Cards ---------- */
+.repo-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-surface);
+  transition: all var(--duration-fast) var(--ease-standard);
+  min-height: 200px;
+}
+.repo-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 16px rgba(47, 139, 255, 0.12);
+}
+.repo-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.repo-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.repo-card__book-icon {
+  flex-shrink: 0;
+  color: var(--accent-blue);
+}
+.repo-card__name {
+  font-size: var(--fs-body);
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.repo-card__name a {
+  color: var(--fg-primary);
+  text-decoration: none;
+  transition: color var(--duration-fast);
+}
+.repo-card__name a:hover {
+  color: var(--accent-blue);
+}
+.repo-card__badge {
+  font-size: var(--fs-micro);
+  font-family: var(--font-mono);
+  color: var(--fg-muted);
+  border: 1px solid var(--border-hairline);
+  border-radius: 999px;
+  padding: 1px 8px;
+  flex-shrink: 0;
+}
+.repo-card__desc {
+  font-size: var(--fs-small);
+  color: var(--fg-secondary);
+  line-height: var(--lh-normal);
+  margin: 0 0 var(--space-6);
+  flex-grow: 1;
+}
+.repo-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-hairline);
+  font-size: var(--fs-micro);
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+}
+.repo-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.repo-card__lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--fg-secondary);
+}
+.repo-card__lang-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.repo-card__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--fg-muted);
+}
+.repo-card__stat svg {
+  flex-shrink: 0;
+}
+.repo-card__view-link {
+  font-size: var(--fs-small);
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--duration-fast);
+  margin-left: auto;
+}
+.repo-card__view-link:hover {
+  text-decoration: underline;
+  color: var(--fg-primary);
+}
+
 .state { text-align: center; color: var(--fg-secondary); padding: var(--space-16) 0; }
 .state--error { color: var(--status-danger); }
 .prose { max-width: 720px; margin-inline: auto; display: grid; gap: var(--space-6); }
@@ -28,8 +148,8 @@
 
 /* ---------- Forms ---------- */
 .form { display: grid; gap: var(--space-4); max-width: 720px; margin-inline: auto; }
-.field { display: grid; gap: var(--space-2); }
-.field label { font-size: var(--fs-small); color: var(--fg-secondary); }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: var(--fs-small); color: var(--fg-secondary); line-height: 1.25; margin: 0; font-weight: 500; }
 .field input, .field select, .field textarea {
   background: var(--bg-near-black); border: 1px solid var(--border-hairline); border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4); width: 100%;
@@ -41,9 +161,9 @@
 .notice { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); font-size: var(--fs-small); border: 1px solid var(--border-hairline); }
 .notice--error { border-color: var(--status-danger); color: var(--status-danger); }
 .notice--ok { border-color: var(--status-success); color: var(--status-success); }
-.field--check { display: flex; align-items: center; gap: var(--space-3); }
-.field--check input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; }
-.field--check label { font-size: var(--fs-small); color: var(--fg-secondary); cursor: pointer; }
+.field--check { display: flex; flex-direction: row; align-items: center; gap: var(--space-3); }
+.field--check input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; flex-shrink: 0; }
+.field--check label { font-size: var(--fs-small); color: var(--fg-secondary); cursor: pointer; line-height: 1.3; }
 
 /* ---------- Auth Boxes (Personal, Business, Legal) ---------- */
 .auth-box {

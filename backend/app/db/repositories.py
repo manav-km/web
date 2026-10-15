@@ -11,13 +11,13 @@ def _sanitize(rows: list[dict]) -> list[dict]:
 
 def list_visible() -> list[dict]:
     sb = get_supabase()
-    data = sb.table("repositories").select("*").eq("is_visible", True).order("stars", desc=True).execute().data
+    data = sb.table("repositories").select("*").eq("is_visible", True).neq("source", "trd-dnmx").order("stars", desc=True).execute().data
     return _sanitize(data)
 
 
 def list_all_admin() -> list[dict]:
     sb = get_supabase()
-    data = sb.table("repositories").select("*").order("source").order("repo_name").execute().data
+    data = sb.table("repositories").select("*").neq("source", "trd-dnmx").order("source").order("repo_name").execute().data
     return _sanitize(data)
 
 

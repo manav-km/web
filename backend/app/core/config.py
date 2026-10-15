@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
     # GitHub
     github_token: str | None = None
-    github_accounts: str = "manav-km,trd-dnmx"
+    github_accounts: str = "manav-km"
 
     # Admin
     admin_firebase_uid: str | None = None

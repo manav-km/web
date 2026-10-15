@@ -3,7 +3,7 @@
  * Formatted with neat multi-box sections: Box 1 (Personal Info), Box 2 (Business Info), Box 3 (Legal & Privacy).
  */
 import {
-  onAuth, signIn, signUp, signInGoogle, signInApple, signInMicrosoft,
+  onAuth, signIn, signUp, signInGoogle,
   resetPassword, friendlyAuthError, setUserProfile, logOut
 } from "../core/auth.js";
 import { api, h } from "../core/api.js";
@@ -61,8 +61,6 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
   const btnReset = document.getElementById("auth-reset");
   const btnSubmit = document.getElementById("auth-submit");
   const btnGoogle = document.getElementById("auth-google");
-  const btnApple = document.getElementById("auth-apple");
-  const btnMicrosoft = document.getElementById("auth-microsoft");
   const btnForgot = document.getElementById("auth-forgot");
   const forgotWrap = document.getElementById("auth-forgot-wrap");
 
@@ -78,6 +76,9 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
 
   // Cloudflare Turnstile mount
   let turnstileWidgetId = null;
+  let turnstileToken = null;
+  let turnstileFailed = false;
+
   function mountTurnstile() {
     if (!turnstileContainer) return;
     const tryRender = () => {
@@ -87,8 +88,21 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
         turnstileWidgetId = window.turnstile.render(turnstileContainer, {
           sitekey: TURNSTILE_SITE_KEY,
           theme: "dark",
+          callback: (token) => {
+            turnstileToken = token;
+          },
+          "error-callback": (code) => {
+            console.warn("Turnstile error code:", code);
+            turnstileFailed = true;
+          },
+          "expired-callback": () => {
+            turnstileToken = null;
+          },
         });
-      } catch { /* already rendered or failed */ }
+      } catch (err) {
+        console.warn("Turnstile render error:", err);
+        turnstileFailed = true;
+      }
     };
     tryRender();
   }
@@ -176,6 +190,7 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
   if (btnReset) {
     btnReset.addEventListener("click", () => {
       clearAlert();
+      turnstileToken = null;
       if (window.turnstile && turnstileWidgetId !== null) {
         try { window.turnstile.reset(turnstileWidgetId); } catch { /* ignore */ }
       }
@@ -274,11 +289,11 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
         return;
       }
 
-      // Cloudflare Turnstile token check if active
-      if (window.turnstile && turnstileWidgetId !== null) {
-        const token = window.turnstile.getResponse(turnstileWidgetId);
+      // Cloudflare Turnstile token check if active & rendered without error
+      if (window.turnstile && turnstileWidgetId !== null && !turnstileFailed) {
+        const token = turnstileToken || window.turnstile.getResponse(turnstileWidgetId);
         if (!token) {
-          showAlert("Please complete the Cloudflare bot prevention check.");
+          showAlert("Please complete the Cloudflare verification check.");
           return;
         }
       }
@@ -330,39 +345,26 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
     }
   });
 
-  // Helper for OAuth sign-in flow (Google, Apple, Microsoft)
-  async function handleOAuthSignIn(providerName, signInFn) {
-    clearAlert();
-    if (mode === "signup" && (!checkAge.checked || !checkPriv.checked)) {
-      showAlert(`Please confirm you are over 18 and accept the Privacy Policy before continuing with ${providerName}.`);
-      return;
-    }
-
-    try {
-      const res = await signInFn();
-      if (checkAge.checked && checkPriv.checked) {
-        await api("/auth/confirm-age", { method: "POST", body: { age_confirmed: true, privacy_accepted: true }, auth: true }).catch(() => {});
-      }
-      showAlert(`Signed in with ${providerName}! Redirecting...`, true);
-      finishRedirect();
-    } catch (err) {
-      showAlert(friendlyAuthError(err));
-    }
-  }
-
-  // Google sign in
+  // Google sign-in
   if (btnGoogle) {
-    btnGoogle.addEventListener("click", () => handleOAuthSignIn("Google", signInGoogle));
-  }
+    btnGoogle.addEventListener("click", async () => {
+      clearAlert();
+      if (mode === "signup" && (!checkAge.checked || !checkPriv.checked)) {
+        showAlert("Please confirm you are over 18 and accept the Privacy Policy before continuing with Google.");
+        return;
+      }
 
-  // Apple sign in
-  if (btnApple) {
-    btnApple.addEventListener("click", () => handleOAuthSignIn("Apple", signInApple));
-  }
-
-  // Microsoft sign in
-  if (btnMicrosoft) {
-    btnMicrosoft.addEventListener("click", () => handleOAuthSignIn("Microsoft", signInMicrosoft));
+      try {
+        await signInGoogle();
+        if (checkAge.checked && checkPriv.checked) {
+          await api("/auth/confirm-age", { method: "POST", body: { age_confirmed: true, privacy_accepted: true }, auth: true }).catch(() => {});
+        }
+        showAlert("Signed in with Google! Redirecting...", true);
+        finishRedirect();
+      } catch (err) {
+        showAlert(friendlyAuthError(err));
+      }
+    });
   }
 
   // Password reset
