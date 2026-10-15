@@ -25,22 +25,27 @@
 .repo-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: var(--space-6);
-  border-radius: var(--radius-lg);
+  background: var(--bg-near-black);
   border: 1px solid var(--border-hairline);
-  background: var(--bg-surface);
-  transition: all var(--duration-fast) var(--ease-standard);
-  min-height: 200px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--duration-base) var(--ease-standard),
+              transform var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard),
+              box-shadow var(--duration-base) var(--ease-standard);
+  position: relative;
+  min-height: 320px;
 }
 .repo-card:hover {
+  background: #11141c;
   border-color: var(--border-strong);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 16px rgba(47, 139, 255, 0.12);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card), 0 0 24px rgba(47, 139, 255, 0.16);
 }
 .repo-card__header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   margin-bottom: var(--space-3);
@@ -56,8 +61,9 @@
   color: var(--accent-blue);
 }
 .repo-card__name {
-  font-size: var(--fs-body);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 700;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -77,66 +83,102 @@
   color: var(--fg-muted);
   border: 1px solid var(--border-hairline);
   border-radius: 999px;
-  padding: 1px 8px;
+  padding: 2px 10px;
   flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-uppercase);
 }
 .repo-card__desc {
   font-size: var(--fs-small);
   color: var(--fg-secondary);
   line-height: var(--lh-normal);
-  margin: 0 0 var(--space-6);
+  margin: 0 0 var(--space-4);
   flex-grow: 1;
 }
-.repo-card__footer {
+.repo-card__lang-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border-hairline);
-  font-size: var(--fs-micro);
-  color: var(--fg-muted);
+  height: 6px;
+  width: 100%;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  margin-bottom: var(--space-3);
+  gap: 1px;
+}
+.repo-card__lang-bar span {
+  display: block;
+  height: 100%;
+}
+.repo-card__langs-list {
   font-family: var(--font-mono);
-}
-.repo-card__meta {
+  font-size: var(--fs-micro);
+  color: var(--fg-secondary);
+  margin: 0 0 var(--space-4);
+  line-height: 1.5;
   display: flex;
-  align-items: center;
-  gap: var(--space-4);
   flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
 }
-.repo-card__lang {
+.repo-card__lang-item {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: var(--fg-secondary);
+  gap: 5px;
 }
 .repo-card__lang-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
 }
+.repo-card__stats-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--fg-secondary);
+}
 .repo-card__stat {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  color: var(--fg-muted);
+  gap: 5px;
 }
 .repo-card__stat svg {
+  color: var(--accent-blue);
   flex-shrink: 0;
 }
-.repo-card__view-link {
-  font-size: var(--fs-small);
-  color: var(--accent-blue);
-  text-decoration: none;
-  font-weight: 500;
-  transition: all var(--duration-fast);
-  margin-left: auto;
+.repo-card__dates-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--fg-muted);
+  margin-bottom: var(--space-4);
 }
-.repo-card__view-link:hover {
-  text-decoration: underline;
+.repo-card__footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+.repo-card__view-btn {
+  width: 100%;
+  justify-content: center;
+  gap: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-uppercase);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+}
+.repo-card__view-btn:hover {
+  border-color: var(--accent-blue);
   color: var(--fg-primary);
 }
 

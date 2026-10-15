@@ -4,6 +4,7 @@
  * Content comes from the API (published only) — adding content never needs a code edit.
  */
 import { api, h, fmtDate, fmtDateDay, label } from "../core/api.js";
+import { ALL_REPOSITORIES } from "../data/repos-data.js";
 
 const LANG_COLORS = {
   JavaScript: "#f1e05a",
@@ -45,19 +46,24 @@ function normalizeRepo(r) {
   const name = r.name || r.repo_name;
   return {
     name,
-    url: r.html_url || r.github_url,
+    url: r.html_url || r.github_url || `https://github.com/manav-km/${name}`,
     desc: r.description || REPO_DESCRIPTIONS[name?.toLowerCase()] || "Open-source repository on GitHub.",
-    lang: r.language || (r.languages?.[0]?.name) || "Code",
+    lang: r.primary_language || r.language || (r.languages?.[0]?.name) || "Code",
+    languages: r.languages || (r.language ? [{ name: r.language, percent: 100 }] : []),
+    file_count: r.file_count || 0,
+    created_at: r.created_at,
+    pushed_at: r.pushed_at,
+    updated_at: r.updated_at || r.github_updated_at,
     stars: r.stargazers_count ?? r.stars ?? 0,
     forks: r.forks_count ?? r.forks ?? 0,
-    updated: r.updated_at || r.github_updated_at,
     source: r.source || "manav-km",
   };
 }
 
 const KINDS = {
   projects: {
-    endpoint: "/projects", filters: ["all", "websites", "pc_apps", "mobile_apps", "robotics"],
+    endpoint: "/projects",
+    filters: ["all", "websites", "pc_apps", "mobile_apps", "robotics"],
     filterLabels: { all: "ALL", websites: "WEBSITES", pc_apps: "PC APPS", mobile_apps: "MOBILE APPS", robotics: "ROBOTICS" },
     tile: (p) => h("article", { class: "card tile", "data-reveal": "" },
       p.logo_url ? h("img", { class: "tile__logo", src: p.logo_url, alt: `${p.name} logo`, loading: "lazy" }) : null,
@@ -69,11 +75,38 @@ const KINDS = {
         p.website_url ? h("a", { href: p.website_url, target: "_blank", rel: "noopener noreferrer" }, "Website") : null)),
   },
   repositories: {
-    endpoint: "/repositories", filters: null,
+    endpoint: "/repositories",
+    filters: ["all", "javascript", "python", "html", "css"],
+    filterLabels: { all: "ALL", javascript: "JAVASCRIPT", python: "PYTHON", html: "HTML", css: "CSS" },
     tile: (raw) => {
       const r = normalizeRepo(raw);
-      const dotColor = LANG_COLORS[r.lang] || "var(--accent-blue)";
+      const langs = (r.languages && r.languages.length)
+        ? r.languages
+        : (r.lang ? [{ name: r.lang, percent: 100 }] : []);
+
+      // Segmented lang-bar
+      const langBarSegments = langs.map((l) =>
+        h("span", {
+          style: `width: ${l.percent}%; background-color: ${LANG_COLORS[l.name] || "var(--accent-blue)"};`,
+          title: `${l.name} ${l.percent}%`
+        })
+      );
+
+      // Langs text list with color dots and percentages
+      const langItems = langs.map((l) =>
+        h("span", { class: "repo-card__lang-item" },
+          h("span", { class: "repo-card__lang-dot", style: `background-color: ${LANG_COLORS[l.name] || "var(--accent-blue)"};` }),
+          h("span", null, `${l.name} `),
+          h("strong", { style: "color: var(--fg-primary); font-weight: 600;" }, `${l.percent}%`)
+        )
+      );
+
+      const fileCountText = r.file_count ? `${r.file_count} Files` : null;
+      const createdStr = r.created_at ? fmtDate(r.created_at) : null;
+      const updatedStr = (r.pushed_at || r.updated_at || r.updated) ? fmtDate(r.pushed_at || r.updated_at || r.updated) : null;
+
       return h("article", { class: "card tile repo-card", "data-reveal": "" },
+        // Header
         h("div", { class: "repo-card__header" },
           h("div", { class: "repo-card__title-row" },
             h("svg", { class: "repo-card__book-icon", viewBox: "0 0 16 16", width: "16", height: "16", "aria-hidden": "true" },
@@ -85,35 +118,56 @@ const KINDS = {
           ),
           h("span", { class: "repo-card__badge" }, "Public")
         ),
+
+        // Description
         h("p", { class: "repo-card__desc" }, r.desc),
-        h("div", { class: "repo-card__footer" },
-          h("div", { class: "repo-card__meta" },
-            h("span", { class: "repo-card__lang" },
-              h("span", { class: "repo-card__lang-dot", style: `background-color: ${dotColor};` }),
-              r.lang
+
+        // Languages Segmented Progress Bar
+        langBarSegments.length ? h("div", { class: "repo-card__lang-bar", "aria-label": "Language distribution" }, ...langBarSegments) : null,
+
+        // Languages List with %
+        langItems.length ? h("div", { class: "repo-card__langs-list" }, ...langItems) : null,
+
+        // Stats Row (Stars, Forks, Files)
+        h("div", { class: "repo-card__stats-row" },
+          h("span", { class: "repo-card__stat", title: `${r.stars} Stars` },
+            h("svg", { viewBox: "0 0 16 16", width: "14", height: "14", fill: "currentColor", "aria-hidden": "true" },
+              h("path", { d: "M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" })
             ),
-            h("span", { class: "repo-card__stat", title: `${r.stars} Stars` },
-              h("svg", { viewBox: "0 0 16 16", width: "14", height: "14", fill: "currentColor", "aria-hidden": "true" },
-                h("path", { d: "M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" })
-              ),
-              String(r.stars)
-            ),
-            h("span", { class: "repo-card__stat", title: `${r.forks} Forks` },
-              h("svg", { viewBox: "0 0 16 16", width: "14", height: "14", fill: "currentColor", "aria-hidden": "true" },
-                h("path", { d: "M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h4.5A2.25 2.25 0 0012.5 6.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v-2.122a.75.75 0 01.75-.75h.75a.75.75 0 01.75.75v2.122z" })
-              ),
-              String(r.forks)
-            )
+            `${r.stars} Stars`
           ),
-          h("a", { class: "repo-card__view-link", href: r.url, target: "_blank", rel: "noopener noreferrer", "data-cursor-hover": "" },
-            "View Code \u2192"
+          h("span", { class: "repo-card__stat", title: `${r.forks} Forks` },
+            h("svg", { viewBox: "0 0 16 16", width: "14", height: "14", fill: "currentColor", "aria-hidden": "true" },
+              h("path", { d: "M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h4.5A2.25 2.25 0 0012.5 6.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v-2.122a.75.75 0 01.75-.75h.75a.75.75 0 01.75.75v2.122z" })
+            ),
+            `${r.forks} Forks`
+          ),
+          fileCountText ? h("span", { class: "repo-card__stat", title: fileCountText },
+            h("svg", { viewBox: "0 0 16 16", width: "14", height: "14", fill: "currentColor", "aria-hidden": "true" },
+              h("path", { d: "M1.75 2.5a.25.25 0 00-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 00.25-.25v-8.5a.25.25 0 00-.25-.25H7.707l-1.854-1.854A.5.5 0 005.5 2.5H1.75zM0 2.75C0 1.784.784 1 1.75 1h3.75c.464 0 .91.184 1.237.512L8.586 3.366A.25.25 0 008.75 3.5h5.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0114.25 15.5H1.75A1.75 1.75 0 010 13.75V2.75z" })
+            ),
+            fileCountText
+          ) : null
+        ),
+
+        // Dates Row
+        (createdStr || updatedStr) ? h("div", { class: "repo-card__dates-row" },
+          createdStr ? h("span", null, `Released: ${createdStr}`) : null,
+          updatedStr ? h("span", null, `Updated: ${updatedStr}`) : null
+        ) : null,
+
+        // Footer / Button
+        h("div", { class: "repo-card__footer" },
+          h("a", { class: "btn btn--secondary repo-card__view-btn", href: r.url, target: "_blank", rel: "noopener noreferrer", "data-cursor-hover": "" },
+            "VIEW REPOSITORY \u2197"
           )
         )
       );
     },
   },
   achievements: {
-    endpoint: "/achievements", filters: ["all", "development", "hackathon", "robotics", "gaming", "education"],
+    endpoint: "/achievements",
+    filters: ["all", "development", "hackathon", "robotics", "gaming", "education"],
     tile: (a) => h("article", { class: "card tile", "data-reveal": "" },
       a.image_url ? h("img", { class: "tile__media", src: a.image_url, alt: `${a.title} — certificate or award`, loading: "lazy" }) : null,
       h("p", { class: "card__eyebrow" }, label(a.category)),
@@ -123,7 +177,8 @@ const KINDS = {
       h("p", { class: "tile__meta" }, a.event_date ? new Date(a.event_date).getFullYear() : "")),
   },
   uploads: {
-    endpoint: "/uploads", filters: ["all", "project_demo", "tutorial", "experiment", "showcase", "other"],
+    endpoint: "/uploads",
+    filters: ["all", "project_demo", "tutorial", "experiment", "showcase", "other"],
     tile: (u) => h("article", { class: "card tile", "data-reveal": "" },
       h("a", { href: u.external_link, target: "_blank", rel: "noopener noreferrer", "aria-label": `Open ${u.title} in a new tab` },
         u.thumbnail_url ? h("img", { class: "tile__media", src: u.thumbnail_url, alt: `${u.title} thumbnail`, loading: "lazy" })
@@ -134,7 +189,8 @@ const KINDS = {
       h("p", { class: "tile__meta" }, fmtDateDay(u.uploaded_on))),
   },
   blog: {
-    endpoint: "/blog", filters: ["all", "development", "ai", "robotics", "projects", "tutorials", "other"],
+    endpoint: "/blog",
+    filters: ["all", "development", "ai", "robotics", "projects", "tutorials", "other"],
     tile: (b) => h("a", { class: "card tile", href: `/blog/${encodeURIComponent(b.slug)}`, "data-reveal": "" },
       h("p", { class: "card__eyebrow" }, label(b.category)),
       h("h3", { class: "card__title" }, b.title),
@@ -144,33 +200,68 @@ const KINDS = {
 };
 
 const main = document.querySelector("[data-kind]");
-const cfg = KINDS[main.dataset.kind];
+const cfg = KINDS[main?.dataset.kind];
 const filtersEl = document.getElementById("filters");
 const grid = document.getElementById("grid");
 let active = "all";
 
 function setState(text, error = false) {
-  grid.replaceChildren(h("p", { class: `state${error ? " state--error" : ""}`, role: error ? "alert" : "status" }, text));
+  if (grid) {
+    grid.replaceChildren(h("p", { class: `state${error ? " state--error" : ""}`, role: error ? "alert" : "status" }, text));
+  }
 }
 
 async function load() {
+  if (!grid || !cfg) return;
   setState("Loading…");
   try {
     let items = [];
     if (main.dataset.kind === "repositories") {
+      let repos = [...ALL_REPOSITORIES];
       try {
         const ghRes = await fetch("https://api.github.com/users/manav-km/repos?per_page=100&sort=updated");
         if (ghRes.ok) {
           const ghRepos = await ghRes.json();
-          // Filter out forks and any trd-dnmx repos
-          items = ghRepos.filter((r) => !r.fork && !r.name.toLowerCase().includes("trd-dnmx") && !r.owner?.login?.toLowerCase().includes("trd-dnmx"));
+          const liveMap = new Map();
+          ghRepos.forEach((g) => {
+            if (!g.fork && !g.name.toLowerCase().includes("trd-dnmx") && !g.owner?.login?.toLowerCase().includes("trd-dnmx")) {
+              liveMap.set(g.name.toLowerCase(), g);
+            }
+          });
+          repos = repos.map((r) => {
+            const live = liveMap.get(r.name.toLowerCase());
+            if (live) {
+              return {
+                ...r,
+                stars: live.stargazers_count ?? r.stars,
+                forks: live.forks_count ?? r.forks,
+                pushed_at: live.pushed_at || r.pushed_at,
+                updated_at: live.updated_at || r.updated_at,
+              };
+            }
+            return r;
+          });
         }
       } catch (err) {
-        console.warn("Direct GitHub API failed, using backend fallback:", err);
+        console.warn("Direct GitHub API fetch skipped or rate-limited; using cached repo data:", err);
       }
-      if (!items.length) {
-        items = (await api(cfg.endpoint)).filter((r) => r.source !== "trd-dnmx" && !r.repo_name?.toLowerCase().includes("trd-dnmx"));
+
+      // Defensively strip any trd-dnmx
+      repos = repos.filter((r) => !r.name.toLowerCase().includes("trd-dnmx") && r.source !== "trd-dnmx");
+
+      // Filter by language if selected
+      if (active !== "all") {
+        const targetLang = active.toLowerCase();
+        repos = repos.filter((r) => {
+          if (r.primary_language && r.primary_language.toLowerCase() === targetLang) return true;
+          if (r.language && r.language.toLowerCase() === targetLang) return true;
+          if (Array.isArray(r.languages)) {
+            return r.languages.some((l) => l.name.toLowerCase() === targetLang);
+          }
+          return false;
+        });
       }
+      items = repos;
     } else {
       const q = active !== "all" ? `?category=${encodeURIComponent(active)}` : "";
       items = await api(cfg.endpoint + q);
@@ -181,15 +272,27 @@ async function load() {
     document.dispatchEvent(new Event("content:rendered"));
     // reveal-on-scroll for dynamically added tiles
     grid.querySelectorAll("[data-reveal]").forEach((el) => requestAnimationFrame(() => el.classList.add("is-visible")));
-  } catch (e) { setState(e.message, true); }
+  } catch (e) {
+    setState(e.message, true);
+  }
 }
 
-if (cfg.filters) {
+if (filtersEl && cfg?.filters) {
   cfg.filters.forEach((f) => {
-    const b = h("button", { class: "filter", type: "button", "aria-pressed": String(f === active), "data-cursor-hover": "",
-      onclick: () => { active = f; filtersEl.querySelectorAll(".filter").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); load(); } },
-      cfg.filterLabels?.[f] || label(f).toUpperCase());
+    const b = h("button", {
+      class: "filter",
+      type: "button",
+      "aria-pressed": String(f === active),
+      "data-cursor-hover": "",
+      onclick: () => {
+        active = f;
+        filtersEl.querySelectorAll(".filter").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+        load();
+      }
+    },
+    cfg.filterLabels?.[f] || label(f).toUpperCase());
     filtersEl.append(b);
   });
 }
+
 load();
