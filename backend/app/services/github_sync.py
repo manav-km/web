@@ -52,7 +52,12 @@ async def sync_all() -> dict:
 async def _fetch_account_repos(client: httpx.AsyncClient, headers: dict, account: str) -> list[dict]:
     resp = await client.get(f"{_API}/users/{account}/repos", headers=headers, params={"per_page": 100})
     resp.raise_for_status()
-    return [r for r in resp.json() if not r.get("private")]
+    return [
+        r for r in resp.json()
+        if not r.get("private")
+        and not r.get("fork")
+        and "trd-dnmx" not in r.get("name", "").lower()
+    ]
 
 
 async def _fetch_languages(client: httpx.AsyncClient, headers: dict, account: str, repo_name: str) -> dict:

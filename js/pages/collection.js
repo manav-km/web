@@ -4,7 +4,6 @@
  * Content comes from the API (published only) — adding content never needs a code edit.
  */
 import { api, h, fmtDate, fmtDateDay, label } from "../core/api.js";
-import { ALL_REPOSITORIES } from "../data/repos-data.js";
 
 const LANG_COLORS = {
   JavaScript: "#f1e05a",
@@ -48,14 +47,12 @@ function normalizeRepo(r) {
     name,
     url: r.html_url || r.github_url || `https://github.com/manav-km/${name}`,
     desc: r.description || REPO_DESCRIPTIONS[name?.toLowerCase()] || "Open-source repository on GitHub.",
-    lang: r.primary_language || r.language || (r.languages?.[0]?.name) || "Code",
+    lang: r.language || (r.languages?.[0]?.name) || "Code",
     languages: r.languages || (r.language ? [{ name: r.language, percent: 100 }] : []),
-    file_count: r.file_count || 0,
-    created_at: r.created_at,
-    pushed_at: r.pushed_at,
-    updated_at: r.updated_at || r.github_updated_at,
     stars: r.stargazers_count ?? r.stars ?? 0,
     forks: r.forks_count ?? r.forks ?? 0,
+    created_at: r.created_at || r.published_on,
+    updated_at: r.github_updated_at || r.pushed_at || r.updated_at,
     source: r.source || "manav-km",
   };
 }
@@ -76,13 +73,12 @@ const KINDS = {
   },
   repositories: {
     endpoint: "/repositories",
-    filters: ["all", "javascript", "python", "html", "css"],
-    filterLabels: { all: "ALL", javascript: "JAVASCRIPT", python: "PYTHON", html: "HTML", css: "CSS" },
+    filters: null,
     tile: (raw) => {
       const r = normalizeRepo(raw);
-      const langs = (r.languages && r.languages.length)
+      const langs = (Array.isArray(r.languages) && r.languages.length)
         ? r.languages
-        : (r.lang ? [{ name: r.lang, percent: 100 }] : []);
+        : (r.lang && r.lang !== "Code" ? [{ name: r.lang, percent: 100 }] : []);
 
       // Segmented lang-bar
       const langBarSegments = langs.map((l) =>
@@ -96,14 +92,13 @@ const KINDS = {
       const langItems = langs.map((l) =>
         h("span", { class: "repo-card__lang-item" },
           h("span", { class: "repo-card__lang-dot", style: `background-color: ${LANG_COLORS[l.name] || "var(--accent-blue)"};` }),
-          h("span", null, `${l.name} `),
+          h("span", {}, `${l.name} `),
           h("strong", { style: "color: var(--fg-primary); font-weight: 600;" }, `${l.percent}%`)
         )
       );
 
-      const fileCountText = r.file_count ? `${r.file_count} Files` : null;
       const createdStr = r.created_at ? fmtDate(r.created_at) : null;
-      const updatedStr = (r.pushed_at || r.updated_at || r.updated) ? fmtDate(r.pushed_at || r.updated_at || r.updated) : null;
+      const updatedStr = r.updated_at ? fmtDate(r.updated_at) : null;
 
       return h("article", { class: "card tile repo-card", "data-reveal": "" },
         // Header
@@ -128,7 +123,7 @@ const KINDS = {
         // Languages List with %
         langItems.length ? h("div", { class: "repo-card__langs-list" }, ...langItems) : null,
 
-        // Stats Row (Stars, Forks, Files)
+        // Stats Row (Stars, Forks)
         h("div", { class: "repo-card__stats-row" },
           h("span", { class: "repo-card__stat", title: `${r.stars} Stars` },
             h("svg", { viewBox: "0 0 16 16", width: "14", height: "14", fill: "currentColor", "aria-hidden": "true" },
@@ -141,19 +136,13 @@ const KINDS = {
               h("path", { d: "M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h4.5A2.25 2.25 0 0012.5 6.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v-2.122a.75.75 0 01.75-.75h.75a.75.75 0 01.75.75v2.122z" })
             ),
             `${r.forks} Forks`
-          ),
-          fileCountText ? h("span", { class: "repo-card__stat", title: fileCountText },
-            h("svg", { viewBox: "0 0 16 16", width: "14", height: "14", fill: "currentColor", "aria-hidden": "true" },
-              h("path", { d: "M1.75 2.5a.25.25 0 00-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 00.25-.25v-8.5a.25.25 0 00-.25-.25H7.707l-1.854-1.854A.5.5 0 005.5 2.5H1.75zM0 2.75C0 1.784.784 1 1.75 1h3.75c.464 0 .91.184 1.237.512L8.586 3.366A.25.25 0 008.75 3.5h5.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0114.25 15.5H1.75A1.75 1.75 0 010 13.75V2.75z" })
-            ),
-            fileCountText
-          ) : null
+          )
         ),
 
         // Dates Row
         (createdStr || updatedStr) ? h("div", { class: "repo-card__dates-row" },
-          createdStr ? h("span", null, `Released: ${createdStr}`) : null,
-          updatedStr ? h("span", null, `Updated: ${updatedStr}`) : null
+          createdStr ? h("span", {}, `Released: ${createdStr}`) : null,
+          updatedStr ? h("span", {}, `Updated: ${updatedStr}`) : null
         ) : null,
 
         // Footer / Button
@@ -217,57 +206,28 @@ async function load() {
   try {
     let items = [];
     if (main.dataset.kind === "repositories") {
-      let repos = [...ALL_REPOSITORIES];
       try {
-        const ghRes = await fetch("https://api.github.com/users/manav-km/repos?per_page=100&sort=updated");
-        if (ghRes.ok) {
-          const ghRepos = await ghRes.json();
-          const liveMap = new Map();
-          ghRepos.forEach((g) => {
-            if (!g.fork && !g.name.toLowerCase().includes("trd-dnmx") && !g.owner?.login?.toLowerCase().includes("trd-dnmx")) {
-              liveMap.set(g.name.toLowerCase(), g);
-            }
-          });
-          repos = repos.map((r) => {
-            const live = liveMap.get(r.name.toLowerCase());
-            if (live) {
-              return {
-                ...r,
-                stars: live.stargazers_count ?? r.stars,
-                forks: live.forks_count ?? r.forks,
-                pushed_at: live.pushed_at || r.pushed_at,
-                updated_at: live.updated_at || r.updated_at,
-              };
-            }
-            return r;
-          });
-        }
-      } catch (err) {
-        console.warn("Direct GitHub API fetch skipped or rate-limited; using cached repo data:", err);
+        items = await api(cfg.endpoint);
+      } catch (apiErr) {
+        console.warn("Backend API not reachable, attempting direct GitHub API fallback:", apiErr);
       }
-
-      // Defensively strip any trd-dnmx
-      repos = repos.filter((r) => !r.name.toLowerCase().includes("trd-dnmx") && r.source !== "trd-dnmx");
-
-      // Filter by language if selected
-      if (active !== "all") {
-        const targetLang = active.toLowerCase();
-        repos = repos.filter((r) => {
-          if (r.primary_language && r.primary_language.toLowerCase() === targetLang) return true;
-          if (r.language && r.language.toLowerCase() === targetLang) return true;
-          if (Array.isArray(r.languages)) {
-            return r.languages.some((l) => l.name.toLowerCase() === targetLang);
+      if (!items || !items.length) {
+        try {
+          const ghRes = await fetch("https://api.github.com/users/manav-km/repos?per_page=100&sort=updated");
+          if (ghRes.ok) {
+            const gh = await ghRes.json();
+            items = gh.filter((r) => !r.fork && !r.name.toLowerCase().includes("trd-dnmx") && !r.owner?.login?.toLowerCase().includes("trd-dnmx"));
           }
-          return false;
-        });
+        } catch (ghErr) {
+          console.warn("GitHub API fallback also failed:", ghErr);
+        }
       }
-      items = repos;
     } else {
       const q = active !== "all" ? `?category=${encodeURIComponent(active)}` : "";
       items = await api(cfg.endpoint + q);
     }
 
-    if (!items.length) return setState("Nothing here yet — check back soon.");
+    if (!items || !items.length) return setState("Nothing here yet — check back soon.");
     grid.replaceChildren(...items.map(cfg.tile));
     document.dispatchEvent(new Event("content:rendered"));
     // reveal-on-scroll for dynamically added tiles
