@@ -1,9 +1,8 @@
 /**
  * boot.js — Startup boot sequence:
- * 1. Writes "Manav Kumar Mishra" in the middle.
- * 2. While it's being typed out, pages emerge from the center of the text in circular order
- *    and start revolving around the text and the initialization steps.
- * 3. Terminal executes the 6 initialization steps.
+ * 1. Writes "Manav Kumar Mishra" in the middle with 'A' in "KUMAR" as the orbital center point.
+ * 2. Pages emerge radially from that exact center point in circular order.
+ * 3. Pages revolve around the name & initialization with ZERO overlap.
  * 4. Once initialization finishes, pages smoothly slide to their respective places in the navbar.
  * 5. Bypassed ONLY when navigating via the navbar.
  */
@@ -75,7 +74,7 @@
   const stage = document.createElement("div");
   stage.className = "boot-stage";
 
-  // Center content wrapper
+  // Center content wrapper (Title + Terminal)
   const centerContent = document.createElement("div");
   centerContent.className = "boot-center-content";
 
@@ -109,10 +108,10 @@
   centerContent.appendChild(terminal);
   stage.appendChild(centerContent);
 
-  // Orbital layer: centered over the title & terminal
+  // Orbital layer: fixed viewport layer for zero-overlap coordinate precision
   const orbitLayer = document.createElement("div");
   orbitLayer.className = "boot-orbit-layer";
-  stage.appendChild(orbitLayer);
+  overlay.appendChild(orbitLayer);
 
   overlay.appendChild(stage);
 
@@ -123,7 +122,7 @@
     document.addEventListener("DOMContentLoaded", () => document.body.prepend(overlay));
   }
 
-  // Update clock in terminal
+  // Terminal live clock
   const clockEl = terminal.querySelector("#boot-clock");
   function updateClock() {
     const d = new Date();
@@ -139,7 +138,7 @@
   }
   window.addEventListener("keydown", onKeyDown);
 
-  // 2. Orbital System State
+  // 2. Orbital System & State
   const pills = [];
   const pillStates = [];
   const totalPages = PAGES.length;
@@ -157,19 +156,70 @@
       scale: 0,
       opacity: 0,
       emerged: false,
-      currentX: 0,
-      currentY: 0
+      lastScreenX: 0,
+      lastScreenY: 0
     });
   });
 
-  // Calculate dynamic orbital radius based on viewport
-  function getRadii() {
+  /**
+   * Identifies the exact pixel center of the 'A' in "KUMAR".
+   * Full string: "MANAV KUMAR MISHRA" (index 9 is the 'A' in 'KUMAR').
+   */
+  function getCenterPoint() {
+    const anchor = document.getElementById("boot-anchor-a");
+    if (anchor) {
+      const r = anchor.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    }
+    const titleWrapEl = document.querySelector(".boot-title-wrap");
+    if (titleWrapEl) {
+      const r = titleWrapEl.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    }
+    return { x: window.innerWidth / 2, y: window.innerHeight / 2 - 40 };
+  }
+
+  /**
+   * Calculates orbital radii with dynamic clearance so revolving pills
+   * NEVER overlap the title text or the terminal console.
+   */
+  function getOrbitRadii(centerY) {
     const isMobile = window.innerWidth <= 680;
-    return {
-      rx: isMobile ? Math.min(185, window.innerWidth * 0.44) : Math.min(340, window.innerWidth * 0.43),
-      ry: isMobile ? Math.min(185, window.innerHeight * 0.32) : Math.min(240, window.innerHeight * 0.36),
-      centerYOffset: isMobile ? 35 : 75 // center between title and terminal
-    };
+    const term = document.querySelector(".boot-terminal");
+    const title = document.querySelector(".boot-title-wrap");
+
+    let bottomExtent = 185;
+    let halfWidth = 210;
+
+    if (term) {
+      const tr = term.getBoundingClientRect();
+      bottomExtent = Math.max(bottomExtent, tr.bottom - centerY);
+      halfWidth = Math.max(halfWidth, tr.width / 2);
+    }
+    if (title) {
+      const tr = title.getBoundingClientRect();
+      halfWidth = Math.max(halfWidth, tr.width / 2);
+    }
+
+    // Safety padding: accounts for pill half-width (60px) + half-height (15px) + clearance
+    const clearanceX = isMobile ? 55 : 85;
+    const clearanceY = isMobile ? 40 : 65;
+
+    let rx = halfWidth + clearanceX;
+    let ry = bottomExtent + clearanceY;
+
+    // Viewport bounds
+    const maxRx = (window.innerWidth / 2) - 25;
+    const maxRy = (window.innerHeight / 2) - 25;
+
+    rx = Math.min(rx, maxRx);
+    ry = Math.min(ry, maxRy);
+
+    // Guaranteed minimums
+    rx = Math.max(rx, isMobile ? 180 : 360);
+    ry = Math.max(ry, isMobile ? 210 : 260);
+
+    return { rx, ry };
   }
 
   let orbitAngle = 0;
@@ -179,28 +229,29 @@
   function renderOrbit() {
     if (isDocking) return;
 
-    const { rx, ry, centerYOffset } = getRadii();
+    const center = getCenterPoint();
+    const { rx, ry } = getOrbitRadii(center.y);
     orbitAngle += 0.007; // smooth revolution speed
 
     pillStates.forEach((state, idx) => {
       if (state.progress <= 0) {
         pills[idx].style.opacity = "0";
-        pills[idx].style.transform = `translate(-50%, -50%) scale(0)`;
+        pills[idx].style.transform = `translate(${center.x}px, ${center.y}px) translate(-50%, -50%) scale(0)`;
         return;
       }
 
       const currentAngle = state.baseAngle + orbitAngle;
       const curDist = state.progress;
 
-      // Elliptical coordinate around the center of the text/terminal
-      const x = Math.cos(currentAngle) * (rx * curDist);
-      const y = Math.sin(currentAngle) * (ry * curDist) + (centerYOffset * curDist);
+      // Revolution centered precisely on 'A' in "KUMAR" with zero overlap
+      const x = center.x + Math.cos(currentAngle) * (rx * curDist);
+      const y = center.y + Math.sin(currentAngle) * (ry * curDist);
 
-      state.currentX = x;
-      state.currentY = y;
+      state.lastScreenX = x;
+      state.lastScreenY = y;
 
       pills[idx].style.opacity = String(state.opacity);
-      pills[idx].style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${state.scale})`;
+      pills[idx].style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) scale(${state.scale})`;
     });
 
     rafId = requestAnimationFrame(renderOrbit);
@@ -217,12 +268,24 @@
   let charIdx = 0;
   let isTerminated = false;
 
+  function renderChars(chars) {
+    // Index 9 is the 'A' in "KUMAR"
+    if (chars.length <= 9) {
+      typewriterEl.textContent = chars;
+    } else {
+      const beforeA = chars.slice(0, 9);
+      const aChar = chars.charAt(9);
+      const afterA = chars.slice(10);
+      typewriterEl.innerHTML = `${beforeA}<span id="boot-anchor-a" class="boot-anchor-a">${aChar}</span>${afterA}`;
+    }
+  }
+
   function typeName() {
     if (isTerminated) return;
     if (charIdx <= fullName.length) {
-      typewriterEl.textContent = fullName.slice(0, charIdx);
+      renderChars(fullName.slice(0, charIdx));
 
-      // As letters are typed, trigger pages emerging from the center in circular order
+      // As letters type out, trigger pages emerging from the center in circular order
       const emergenceIndex = Math.floor((charIdx / fullName.length) * totalPages);
       for (let i = 0; i < emergenceIndex && i < totalPages; i++) {
         if (!pillStates[i].emerged) {
@@ -242,12 +305,12 @@
     }
   }
 
-  // Animate a pill emerging smoothly from the center of the text to the orbit
+  // Animate a pill emerging smoothly from the 'A' in "KUMAR" to the full zero-overlap orbit
   function emergePill(idx) {
     const state = pillStates[idx];
     state.emerged = true;
     const startTime = performance.now();
-    const duration = 550; // ms to reach orbit
+    const duration = 580; // ms to reach orbit
 
     function stepEmergence(now) {
       if (isDocking) return;
@@ -258,7 +321,7 @@
 
       state.progress = eased;
       state.scale = eased;
-      state.opacity = Math.min(1, eased * 1.4);
+      state.opacity = Math.min(1, eased * 1.5);
 
       if (t < 1) {
         requestAnimationFrame(stepEmergence);
@@ -272,7 +335,7 @@
     requestAnimationFrame(stepEmergence);
   }
 
-  // Start typing after initial brief pause
+  // Start typing after initial pause
   setTimeout(typeName, 180);
 
   // 4. Run the 6 Terminal Steps
@@ -352,21 +415,16 @@
         targetEl = navLinks.find((a) => a.textContent.trim().toLowerCase() === pageData.name.toLowerCase()) || navLinks[idx];
       }
 
-      const pillRect = pill.getBoundingClientRect();
-
       if (targetEl) {
         const targetRect = targetEl.getBoundingClientRect();
 
-        // Calculate delta vector from current revolving position to the target navbar slot
+        // Calculate absolute target screen coordinates
         if (targetRect.width > 0 && targetRect.top >= 0) {
-          const deltaX = (targetRect.left + targetRect.width / 2) - (pillRect.left + pillRect.width / 2);
-          const deltaY = (targetRect.top + targetRect.height / 2) - (pillRect.top + pillRect.height / 2);
-
-          const curX = pillStates[idx].currentX;
-          const curY = pillStates[idx].currentY;
+          const targetX = targetRect.left + targetRect.width / 2;
+          const targetY = targetRect.top + targetRect.height / 2;
 
           pill.style.transition = "transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.85s ease, background 0.4s ease, border-color 0.4s ease";
-          pill.style.transform = `translate(calc(-50% + ${curX + deltaX}px), calc(-50% + ${curY + deltaY}px)) scale(0.95)`;
+          pill.style.transform = `translate(${targetX}px, ${targetY}px) translate(-50%, -50%) scale(0.95)`;
           pill.style.background = "rgba(47, 139, 255, 0.22)";
           pill.style.borderColor = "var(--accent-blue)";
           pill.style.boxShadow = "0 0 20px rgba(47, 139, 255, 0.7)";
@@ -375,14 +433,14 @@
       }
 
       // Fallback for mobile / collapsed menu: slide upwards towards top center
-      const curX = pillStates[idx].currentX;
-      const curY = pillStates[idx].currentY;
+      const curX = pillStates[idx].lastScreenX;
+      const curY = pillStates[idx].lastScreenY;
       pill.style.transition = "transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.75s ease";
-      pill.style.transform = `translate(calc(-50% + ${curX}px), calc(-50% + ${curY - 260}px)) scale(0.6)`;
+      pill.style.transform = `translate(${curX}px, ${curY - 260}px) translate(-50%, -50%) scale(0.6)`;
       pill.style.opacity = "0";
     });
 
-    // After pills finish sliding into their navbar places, fade out overlay and clean up
+    // Clean up overlay once docking animation completes
     setTimeout(() => {
       overlay.classList.add("is-exiting");
       document.body.style.overflow = originalOverflow;
