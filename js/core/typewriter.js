@@ -55,6 +55,14 @@
     setTimeout(tick, typingSpeed);
   }
 
-  // Start initial typing delay
-  setTimeout(tick, 600);
+  // Start initial typing delay — if bootloader is running, wait until it finishes
+  if (document.querySelector(".boot-overlay")) {
+    document.addEventListener("boot:complete", () => setTimeout(tick, 400), { once: true });
+    // Safety fallback in case boot was skipped or event missed
+    setTimeout(() => {
+      if (phraseIndex === 0 && charIndex === 0) tick();
+    }, 4500);
+  } else {
+    setTimeout(tick, 600);
+  }
 })();
