@@ -1,5 +1,6 @@
 /* ============================================================================
-   boot.css — Cinematic system initialization overlay for first-time direct visits.
+   boot.css — Cinematic system initialization overlay with radial emergence,
+   orbital revolution, and navbar docking transition.
    ============================================================================ */
 
 .boot-overlay {
@@ -16,27 +17,25 @@
   color: var(--fg-primary);
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              visibility 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .boot-overlay.is-exiting {
   opacity: 0;
   visibility: hidden;
-  transform: scale(1.03);
   pointer-events: none;
 }
 
-/* Subtle CRT Scanline texture */
+/* Subtle CRT Scanline overlay */
 .boot-overlay::before {
   content: "";
   position: absolute;
   inset: 0;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.018) 0px,
-    rgba(255, 255, 255, 0.018) 1px,
+    rgba(255, 255, 255, 0.015) 0px,
+    rgba(255, 255, 255, 0.015) 1px,
     transparent 1px,
     transparent 3px
   );
@@ -56,25 +55,25 @@
 .boot-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.28;
+  filter: blur(120px);
+  opacity: 0.3;
 }
 
 .boot-orb--blue {
-  width: 480px;
-  height: 480px;
+  width: 520px;
+  height: 520px;
   background: var(--accent-blue, #2f8bff);
-  top: 15%;
-  left: 55%;
+  top: 20%;
+  left: 60%;
   transform: translate(-50%, -50%);
 }
 
 .boot-orb--red {
-  width: 420px;
-  height: 420px;
+  width: 480px;
+  height: 480px;
   background: var(--accent-red, #ff3b3b);
-  bottom: 10%;
-  left: 45%;
+  bottom: 15%;
+  left: 40%;
   transform: translate(-50%, 50%);
 }
 
@@ -105,7 +104,7 @@
   border-color: var(--accent-blue);
 }
 
-/* Centerpiece: Orbital System */
+/* Central Stage Container */
 .boot-stage {
   position: relative;
   z-index: 2;
@@ -114,91 +113,19 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 680px;
+  max-width: 800px;
   padding: var(--space-4);
 }
 
-.boot-orbit-wrap {
+/* Center Content (Title + Terminal) */
+.boot-center-content {
   position: relative;
-  width: 320px;
-  height: 320px;
+  z-index: 5;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: var(--space-6, 24px);
-}
-
-.boot-orbit-track {
-  position: absolute;
-  inset: 10px;
-  border: 1px dashed rgba(47, 139, 255, 0.22);
-  border-radius: 50%;
-  animation: boot-spin 22s linear infinite;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s;
-}
-
-.boot-overlay.is-docking .boot-orbit-track {
-  opacity: 0;
-  transform: scale(1.6);
-}
-
-/* Center Logo Node */
-.boot-center-logo {
-  position: relative;
-  z-index: 3;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: var(--bg-near-black, #0b0d12);
-  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.2));
-  box-shadow: 0 0 30px rgba(47, 139, 255, 0.25), inset 0 0 16px rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.boot-center-logo img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 8px rgba(47, 139, 255, 0.5));
-}
-
-/* Orbital Page Pills */
-.boot-orbit-node {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform-origin: 0 0;
-}
-
-.boot-node-pill {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  background: rgba(11, 13, 18, 0.92);
-  border: 1px solid var(--border-hairline, rgba(255, 255, 255, 0.12));
-  border-radius: 999px;
-  padding: 3px 10px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--fg-secondary);
-  white-space: nowrap;
-  letter-spacing: 0.05em;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  animation: boot-counter-spin 22s linear infinite;
-  transition: color var(--duration-fast), border-color var(--duration-fast), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.boot-node-pill:hover {
-  color: var(--accent-blue);
-  border-color: var(--accent-blue);
-}
-
-/* During docking transition, pills drift towards navbar */
-.boot-overlay.is-docking .boot-node-pill {
-  transform: translate(-50%, -180px) scale(0.85);
-  opacity: 0;
+  width: 100%;
 }
 
 /* Typewriter Name */
@@ -207,17 +134,19 @@
   align-items: center;
   justify-content: center;
   margin-bottom: var(--space-5, 20px);
+  position: relative;
 }
 
 .boot-title {
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 4vw, 2.1rem);
+  font-size: clamp(1.6rem, 4.5vw, 2.5rem);
   font-weight: 700;
-  letter-spacing: var(--ls-title, 0.1em);
+  letter-spacing: var(--ls-title, 0.12em);
   color: var(--fg-primary);
-  text-shadow: 0 0 24px rgba(255, 255, 255, 0.12);
+  text-shadow: 0 0 28px rgba(255, 255, 255, 0.18), 0 0 45px rgba(47, 139, 255, 0.25);
   margin: 0;
   min-height: 1.3em;
+  text-align: center;
 }
 
 .boot-cursor {
@@ -232,13 +161,14 @@
 /* Terminal Console Box */
 .boot-terminal {
   width: 100%;
-  max-width: 440px;
-  background: rgba(11, 13, 18, 0.88);
-  border: 1px solid var(--border-hairline, rgba(255, 255, 255, 0.1));
+  max-width: 460px;
+  background: rgba(11, 13, 18, 0.92);
+  border: 1px solid var(--border-hairline, rgba(255, 255, 255, 0.12));
   border-radius: var(--radius-lg, 12px);
-  box-shadow: var(--shadow-card, 0 8px 32px rgba(0, 0, 0, 0.6));
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), 0 0 24px rgba(47, 139, 255, 0.12);
   overflow: hidden;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
+  margin-top: var(--space-2, 8px);
 }
 
 .boot-terminal__header {
@@ -350,36 +280,58 @@
   transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Orbit Animations */
-@keyframes boot-spin {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Revolving Page Pills */
+.boot-orbit-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 8;
 }
 
-@keyframes boot-counter-spin {
-  0%   { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(-360deg); }
+.boot-page-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  background: rgba(11, 13, 18, 0.95);
+  border: 1px solid rgba(47, 139, 255, 0.35);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg-primary);
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 14px rgba(47, 139, 255, 0.3);
+  pointer-events: auto;
+  will-change: transform, opacity;
+}
+
+/* Mobile adjustments */
+@media (max-width: 680px) {
+  .boot-title {
+    font-size: 1.4rem;
+  }
+  .boot-terminal {
+    max-width: 90vw;
+  }
+  .boot-terminal__body {
+    font-size: 11px;
+    padding: 12px;
+    min-height: 140px;
+  }
+  .boot-page-pill {
+    font-size: 10px;
+    padding: 3px 9px;
+  }
 }
 
 @keyframes boot-blink {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0; }
-}
-
-@media (max-width: 600px) {
-  .boot-orbit-wrap {
-    width: 250px;
-    height: 250px;
-  }
-  .boot-node-pill {
-    font-size: 9.5px;
-    padding: 2px 7px;
-  }
-  .boot-terminal {
-    max-width: 92vw;
-  }
-  .boot-terminal__body {
-    font-size: 11px;
-    padding: 12px;
-  }
 }
