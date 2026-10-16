@@ -11,15 +11,16 @@
 (function () {
   "use strict";
 
-  // Check if we should run boot sequence
-  const hasBooted = sessionStorage.getItem("has_booted");
-  const isDirectUrl = !document.referrer || !document.referrer.startsWith(window.location.origin);
-  const isForceBoot = new URLSearchParams(window.location.search).get("boot") === "true";
-
-  // Only run on the root homepage for direct first-time session entries, or when ?boot=true
+  // Only run on the root homepage
   const isHomePage = window.location.pathname === "/" || window.location.pathname === "/index.html";
+  if (!isHomePage) return;
 
-  if (!isHomePage || ((hasBooted || !isDirectUrl) && !isForceBoot)) {
+  // Check if visitor entered via the navbar
+  const enteredViaNavbar = sessionStorage.getItem("entered_via_navbar") === "true";
+  sessionStorage.removeItem("entered_via_navbar");
+
+  // If entered via navbar, bypass boot sequence
+  if (enteredViaNavbar) {
     return;
   }
 
@@ -251,9 +252,6 @@
     finished = true;
     isTerminated = true;
     window.removeEventListener("keydown", onKeyDown);
-
-    // Save session flag so repeating visits in this session skip boot
-    sessionStorage.setItem("has_booted", "true");
 
     // Docking animation: pills animate towards navbar
     overlay.classList.add("is-docking");

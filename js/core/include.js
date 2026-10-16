@@ -29,6 +29,18 @@
   initNav();
 })();
 
+// Flag when a visitor navigates to the home page via the navbar
+document.addEventListener("click", (e) => {
+  const a = e.target.closest(".site-nav a");
+  if (!a) return;
+  try {
+    const url = new URL(a.href, window.location.origin);
+    if (url.pathname === "/" || url.pathname === "/index.html") {
+      sessionStorage.setItem("entered_via_navbar", "true");
+    }
+  } catch (_) {}
+}, true);
+
 function initNav() {
   const nav = document.querySelector(".site-nav");
   if (!nav) return;
