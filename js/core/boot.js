@@ -27,12 +27,12 @@
   document.body.style.overflow = "hidden";
 
   const STEPS = [
-    { text: "Loading frontend content...", tag: "SYS" },
-    { text: "Mounting design and UI...", tag: "UI" },
-    { text: "Verifying functions...", tag: "VFY" },
-    { text: "Syncing with backend...", tag: "API" },
-    { text: "All systems nominal...", tag: "OK" },
-    { text: "Launching interface...", tag: "EXEC" }
+    "Loading frontend content...",
+    "Mounting design and UI...",
+    "Verifying functions...",
+    "Syncing with backend...",
+    "All systems nominal...",
+    "Launching interface..."
   ];
 
   const PAGES = [
@@ -324,7 +324,7 @@
   function runNextStep() {
     if (isTerminated) return;
     if (stepIdx < STEPS.length) {
-      const stepData = STEPS[stepIdx];
+      const stepText = STEPS[stepIdx];
 
       // Mark previous step as done
       const prevStep = logsBodyEl.querySelector(".boot-step.is-active");
@@ -340,8 +340,7 @@
       line.className = "boot-step is-active";
       line.innerHTML = `
         <span class="boot-step__icon">❯</span>
-        <span class="boot-step__text">${stepData.text}</span>
-        <span class="boot-step__tag">${stepData.tag}</span>
+        <span class="boot-step__text">${stepText}</span>
       `;
       logsBodyEl.appendChild(line);
       logsBodyEl.scrollTop = logsBodyEl.scrollHeight;
