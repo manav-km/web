@@ -25,44 +25,54 @@
   }
 
   let phraseIndex = 0;
-  let charIndex = 0;
-  let isDeleting = false;
-  let typingSpeed = 90;
+  let charIndex = phrases[0].length; // Start with full initial text "Web Development"
+  let isDeleting = true;             // First transition is deleting after initial pause
+  let timerId = null;
+  let started = false;
 
   function tick() {
+    clearTimeout(timerId);
     const currentPhrase = phrases[phraseIndex];
+    let speed = 95;
 
     if (isDeleting) {
       charIndex--;
       target.textContent = currentPhrase.substring(0, charIndex);
-      typingSpeed = 45;
+      speed = 50; // steady, clean deletion pace
     } else {
       charIndex++;
       target.textContent = currentPhrase.substring(0, charIndex);
-      typingSpeed = 85 + Math.random() * 35; // slight natural jitter
+      speed = 95 + Math.random() * 30; // natural mechanical typing rhythm
     }
 
     if (!isDeleting && charIndex === currentPhrase.length) {
-      // Pause at end of phrase
-      typingSpeed = 2200;
+      // Hold phrase on screen so visitor can comfortably read it
+      speed = 2400;
       isDeleting = true;
     } else if (isDeleting && charIndex === 0) {
       isDeleting = false;
       phraseIndex = (phraseIndex + 1) % phrases.length;
-      typingSpeed = 500; // brief pause before starting next word
+      speed = 600; // pleasant breath before typing next phrase
     }
 
-    setTimeout(tick, typingSpeed);
+    timerId = setTimeout(tick, speed);
   }
 
-  // Start initial typing delay — if bootloader is running, wait until it finishes
+  function startTyping() {
+    if (started) return;
+    started = true;
+    clearTimeout(timerId);
+    // Initial display pause of the default phrase
+    timerId = setTimeout(tick, 2200);
+  }
+
+  // If bootloader is active on page, wait until it finishes
   if (document.querySelector(".boot-overlay")) {
-    document.addEventListener("boot:complete", () => setTimeout(tick, 400), { once: true });
-    // Safety fallback in case boot was skipped or event missed
-    setTimeout(() => {
-      if (phraseIndex === 0 && charIndex === 0) tick();
-    }, 4500);
+    document.addEventListener("boot:complete", startTyping, { once: true });
+    // Fallback in case boot was skipped or event missed
+    setTimeout(startTyping, 4500);
   } else {
-    setTimeout(tick, 600);
+    // Normal visit without bootloader: start after brief entrance pause
+    setTimeout(startTyping, 800);
   }
 })();
