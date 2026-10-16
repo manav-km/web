@@ -162,51 +162,38 @@
   });
 
   /**
-   * Identifies the exact pixel center of the 'A' in "KUMAR".
-   * Full string: "MANAV KUMAR MISHRA" (index 9 is the 'A' in 'KUMAR').
+   * Exact center of the page as the middle point for emergence and revolution.
    */
   function getCenterPoint() {
-    const anchor = document.getElementById("boot-anchor-a");
-    if (anchor) {
-      const r = anchor.getBoundingClientRect();
-      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-    }
-    const titleWrapEl = document.querySelector(".boot-title-wrap");
-    if (titleWrapEl) {
-      const r = titleWrapEl.getBoundingClientRect();
-      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-    }
-    return { x: window.innerWidth / 2, y: window.innerHeight / 2 - 40 };
+    return {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2
+    };
   }
 
   /**
-   * Calculates orbital radii with dynamic clearance so revolving pills
-   * NEVER overlap the title text or the terminal console.
+   * Calculates orbital radii with dynamic clearance around the centered stage
+   * so revolving pills NEVER overlap the title text or the terminal console.
    */
-  function getOrbitRadii(centerY) {
+  function getOrbitRadii() {
     const isMobile = window.innerWidth <= 680;
-    const term = document.querySelector(".boot-terminal");
-    const title = document.querySelector(".boot-title-wrap");
+    const stageEl = document.querySelector(".boot-center-content") || document.querySelector(".boot-stage");
 
-    let bottomExtent = 185;
-    let halfWidth = 210;
+    let halfW = 210;
+    let halfH = 135;
 
-    if (term) {
-      const tr = term.getBoundingClientRect();
-      bottomExtent = Math.max(bottomExtent, tr.bottom - centerY);
-      halfWidth = Math.max(halfWidth, tr.width / 2);
-    }
-    if (title) {
-      const tr = title.getBoundingClientRect();
-      halfWidth = Math.max(halfWidth, tr.width / 2);
+    if (stageEl) {
+      const r = stageEl.getBoundingClientRect();
+      halfW = r.width / 2;
+      halfH = r.height / 2;
     }
 
-    // Safety padding: accounts for pill half-width (60px) + half-height (15px) + clearance
+    // Safety clearance so pills (half-width ~60px, half-height ~15px) stay completely clear
     const clearanceX = isMobile ? 55 : 85;
     const clearanceY = isMobile ? 40 : 65;
 
-    let rx = halfWidth + clearanceX;
-    let ry = bottomExtent + clearanceY;
+    let rx = halfW + clearanceX;
+    let ry = halfH + clearanceY;
 
     // Viewport bounds
     const maxRx = (window.innerWidth / 2) - 25;
@@ -217,7 +204,7 @@
 
     // Guaranteed minimums
     rx = Math.max(rx, isMobile ? 180 : 360);
-    ry = Math.max(ry, isMobile ? 210 : 260);
+    ry = Math.max(ry, isMobile ? 210 : 250);
 
     return { rx, ry };
   }
@@ -230,7 +217,7 @@
     if (isDocking) return;
 
     const center = getCenterPoint();
-    const { rx, ry } = getOrbitRadii(center.y);
+    const { rx, ry } = getOrbitRadii();
     orbitAngle += 0.007; // smooth revolution speed
 
     pillStates.forEach((state, idx) => {
@@ -243,7 +230,7 @@
       const currentAngle = state.baseAngle + orbitAngle;
       const curDist = state.progress;
 
-      // Revolution centered precisely on 'A' in "KUMAR" with zero overlap
+      // Revolution centered precisely at page center (50vw, 50vh) with zero overlap
       const x = center.x + Math.cos(currentAngle) * (rx * curDist);
       const y = center.y + Math.sin(currentAngle) * (ry * curDist);
 
@@ -269,15 +256,7 @@
   let isTerminated = false;
 
   function renderChars(chars) {
-    // Index 9 is the 'A' in "KUMAR"
-    if (chars.length <= 9) {
-      typewriterEl.textContent = chars;
-    } else {
-      const beforeA = chars.slice(0, 9);
-      const aChar = chars.charAt(9);
-      const afterA = chars.slice(10);
-      typewriterEl.innerHTML = `${beforeA}<span id="boot-anchor-a" class="boot-anchor-a">${aChar}</span>${afterA}`;
-    }
+    typewriterEl.textContent = chars;
   }
 
   function typeName() {
