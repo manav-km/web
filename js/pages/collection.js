@@ -202,6 +202,26 @@ function setState(text, error = false) {
 
 async function load() {
   if (!grid || !cfg) return;
+
+  const cacheKey = `col_${main.dataset.kind}_${active}`;
+  let cachedItems = null;
+  try {
+    const raw = sessionStorage.getItem(cacheKey);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Date.now() - parsed.ts < 60000 && Array.isArray(parsed.items) && parsed.items.length) {
+        cachedItems = parsed.items;
+      }
+    }
+  } catch (_) {}
+
+  if (cachedItems) {
+    grid.replaceChildren(...cachedItems.map(cfg.tile));
+    document.dispatchEvent(new Event("content:rendered"));
+    grid.querySelectorAll("[data-reveal]").forEach((el) => requestAnimationFrame(() => el.classList.add("is-visible")));
+    return;
+  }
+
   setState("Loading…");
   try {
     let items = [];
@@ -228,6 +248,11 @@ async function load() {
     }
 
     if (!items || !items.length) return setState("Nothing here yet — check back soon.");
+
+    try {
+      sessionStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), items }));
+    } catch (_) {}
+
     grid.replaceChildren(...items.map(cfg.tile));
     document.dispatchEvent(new Event("content:rendered"));
     // reveal-on-scroll for dynamically added tiles

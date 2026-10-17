@@ -6,6 +6,7 @@
  *   Real focus/hover states (see components.css) work with it disabled.
  * - Fully disabled on touch/coarse-pointer devices; no layout dependency
  *   on it existing.
+ * - Pauses animation loop when stationary to save 100% idle CPU and battery.
  */
 (function () {
   "use strict";
@@ -24,21 +25,29 @@
   let targetY = window.innerHeight / 2;
   let currentX = targetX;
   let currentY = targetY;
-
-  window.addEventListener("mousemove", (e) => {
-    targetX = e.clientX;
-    targetY = e.clientY;
-  }, { passive: true });
+  let rafId = null;
 
   function raf() {
     // spring-lag toward the pointer for a refined feel rather than 1:1 tracking
     const ease = prefersReducedMotion ? 1 : 0.2;
     currentX += (targetX - currentX) * ease;
     currentY += (targetY - currentY) * ease;
-    dot.style.transform = `translate(${currentX}px, ${currentY}px) translate(-50%, -50%)`;
-    requestAnimationFrame(raf);
+    dot.style.transform = `translate(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px) translate(-50%, -50%)`;
+
+    if (Math.abs(targetX - currentX) > 0.1 || Math.abs(targetY - currentY) > 0.1) {
+      rafId = requestAnimationFrame(raf);
+    } else {
+      rafId = null;
+    }
   }
-  requestAnimationFrame(raf);
+
+  window.addEventListener("mousemove", (e) => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+    if (!rafId) {
+      rafId = requestAnimationFrame(raf);
+    }
+  }, { passive: true });
 
   const HOVER_SELECTOR = "a, button, input, select, textarea, [data-cursor-hover], .card";
   const DESTRUCTIVE_SELECTOR = "[data-cursor-glow='red']";

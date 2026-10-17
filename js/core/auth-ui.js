@@ -88,15 +88,6 @@ function whenNavReady(fn) {
     }
   };
   document.addEventListener("partials:ready", handler);
-  // Also poll shortly just in case partials:ready fired before listener registered
-  const interval = setInterval(() => {
-    if (document.querySelector(".site-nav")) {
-      clearInterval(interval);
-      document.removeEventListener("partials:ready", handler);
-      fn();
-    }
-  }, 30);
-  setTimeout(() => clearInterval(interval), 5000);
 }
 
 whenNavReady(() => {
@@ -171,11 +162,20 @@ whenNavReady(() => {
       profile.textContent = (user.displayName || user.email || "?").trim().charAt(0).toUpperCase();
     }
 
-    let isAdmin = false;
-    try {
-      isAdmin = (await api("/auth/bootstrap", { method: "POST", auth: true })).is_admin;
-    } catch { /* nav still works */ }
-    if (user.email === "manavkmlko@gmail.com") isAdmin = true;
+    let isAdmin = user.email === "manavkmlko@gmail.com";
+    if (!isAdmin) {
+      let cachedAdmin = null;
+      try { cachedAdmin = sessionStorage.getItem(`is_admin_${user.uid}`); } catch (_) {}
+      if (cachedAdmin !== null) {
+        isAdmin = cachedAdmin === "1";
+      } else {
+        try {
+          const res = await api("/auth/bootstrap", { method: "POST", auth: true });
+          isAdmin = Boolean(res.is_admin);
+          try { sessionStorage.setItem(`is_admin_${user.uid}`, isAdmin ? "1" : "0"); } catch (_) {}
+        } catch { /* nav still works */ }
+      }
+    }
     window.__isAdmin = isAdmin;
 
     if (isAdmin && links && !links.querySelector(".nav-admin-item")) {

@@ -1,5 +1,8 @@
 """api/v1/repositories.py"""
+import asyncio
 import logging
+import time
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Request
 
 from app.core.request_utils import get_client_ip
@@ -11,28 +14,35 @@ from app.services import audit, github_sync
 logger = logging.getLogger("repositories")
 router = APIRouter(prefix="/api/v1/repositories", tags=["repositories"])
 
-# How many repos we expect. If the DB has fewer we schedule a background sync.
 _EXPECTED_REPO_COUNT = 16
+_MIN_BG_SYNC_INTERVAL = 1800.0  # 30 minutes debouncing
+_bg_sync_lock = asyncio.Lock()
+_last_bg_sync = 0.0
 
 
 @router.get("", response_model=list[RepositoryOut])
 async def list_repositories(background_tasks: BackgroundTasks):
     repos = db.list_visible()
-    if len(repos) < _EXPECTED_REPO_COUNT:
-        # Don't block the response — fire sync in the background so this
-        # request returns the cached rows immediately and the next request
-        # (or a page refresh) will see the full set.
+    now = time.time()
+    # Trigger background sync if DB is completely empty, or if below expected count and debounce interval passed
+    should_sync = (len(repos) == 0) or (len(repos) < _EXPECTED_REPO_COUNT and (now - _last_bg_sync > _MIN_BG_SYNC_INTERVAL))
+    if should_sync and not _bg_sync_lock.locked():
         background_tasks.add_task(_run_sync_quietly)
     return repos
 
 
 async def _run_sync_quietly() -> None:
-    """Run a full GitHub sync and log the outcome; never raises."""
-    try:
-        result = await github_sync.sync_all()
-        logger.info("Background sync complete: %s", result)
-    except Exception as exc:  # noqa: BLE001
-        logger.error("Background sync failed: %s", exc)
+    """Run a full GitHub sync debounced and concurrency-locked; never raises."""
+    global _last_bg_sync
+    if _bg_sync_lock.locked():
+        return
+    async with _bg_sync_lock:
+        _last_bg_sync = time.time()
+        try:
+            result = await github_sync.sync_all()
+            logger.info("Background sync complete: %s", result)
+        except Exception as exc:  # noqa: BLE001
+            logger.error("Background sync failed: %s", exc)
 
 
 @router.get("/admin", response_model=list[RepositoryOut])

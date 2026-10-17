@@ -1,9 +1,17 @@
 """db/blog.py"""
+from app.db._cache import TTLCache
 from app.db._util import stamp_published
 from app.services.supabase_client import get_supabase
 
+_cache = TTLCache(ttl_seconds=60.0)
+
 
 def list_published(category: str | None = None) -> list[dict]:
+    cache_key = f"blog_list_{category or 'all'}"
+    cached = _cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     sb = get_supabase()
     q = (
         sb.table("blog_posts")
@@ -13,13 +21,23 @@ def list_published(category: str | None = None) -> list[dict]:
     )
     if category and category != "all":
         q = q.eq("category", category)
-    return q.execute().data
+    data = q.execute().data
+    _cache.set(cache_key, data)
+    return data
 
 
 def get_by_slug_published(slug: str) -> dict | None:
+    cache_key = f"blog_slug_{slug}"
+    cached = _cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     sb = get_supabase()
     res = sb.table("blog_posts").select("*").eq("slug", slug).eq("status", "published").maybe_single().execute()
-    return res.data if res else None
+    data = res.data if res else None
+    if data:
+        _cache.set(cache_key, data)
+    return data
 
 
 def list_all_admin() -> list[dict]:
@@ -34,16 +52,19 @@ def get(post_id: str) -> dict | None:
 
 
 def create(payload: dict) -> dict:
+    _cache.invalidate()
     sb = get_supabase()
     return sb.table("blog_posts").insert(stamp_published(payload)).execute().data[0]
 
 
 def update(post_id: str, payload: dict) -> dict:
+    _cache.invalidate()
     sb = get_supabase()
     payload = stamp_published(payload, get(post_id))
     return sb.table("blog_posts").update(payload).eq("id", post_id).execute().data[0]
 
 
 def delete(post_id: str) -> None:
+    _cache.invalidate()
     sb = get_supabase()
     sb.table("blog_posts").delete().eq("id", post_id).execute()

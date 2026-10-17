@@ -1,11 +1,6 @@
 /**
- * include.js — loads the shared nav/footer partials into every page.
- *
- * Why fetch() instead of duplicating markup on every page: this is a plain
- * multi-page site with no build step or templating engine, so a single
- * source of truth for the nav/footer avoids 8 copies drifting out of sync.
- * If fetch fails (offline, blocked), the page still works — it just shows
- * its own <noscript> fallback nav (see the markup in each page's <body>).
+ * include.js — loads and caches shared nav/footer partials into every page.
+ * Caches in sessionStorage for zero-latency instant transitions between pages.
  */
 (async function () {
   "use strict";
@@ -14,16 +9,33 @@
   await Promise.all(
     Array.from(mounts).map(async (el) => {
       const name = el.getAttribute("data-include");
+      const cacheKey = `partial_${name}`;
       try {
-        const res = await fetch(`/shared/${name}.html`);
-        if (!res.ok) throw new Error(`Failed to load ${name}`);
-        el.innerHTML = await res.text();
+        let html = null;
+        try {
+          html = sessionStorage.getItem(cacheKey);
+        } catch (_) {}
+
+        if (!html) {
+          const res = await fetch(`/shared/${name}.html`);
+          if (!res.ok) throw new Error(`Failed to load ${name}`);
+          html = await res.text();
+          try {
+            sessionStorage.setItem(cacheKey, html);
+          } catch (_) {}
+        }
+        el.innerHTML = html;
       } catch (err) {
         console.warn(`[include.js] Could not load partial "${name}":`, err);
-        // el keeps whatever <noscript>-safe fallback was already in the markup
       }
     })
   );
+
+  // Auto-set footer year without needing separate script
+  const footerYear = document.getElementById("footer-year");
+  if (footerYear) {
+    footerYear.textContent = new Date().getFullYear();
+  }
 
   document.dispatchEvent(new CustomEvent("partials:ready"));
   initNav();
