@@ -7,7 +7,9 @@ const content = document.getElementById("profile-content");
 const avatarDisplay = document.getElementById("profile-avatar-display");
 const avatarTrigger = document.getElementById("profile-avatar-trigger");
 const nameHeader = document.getElementById("profile-name-header");
+const phoneHeader = document.getElementById("profile-phone-header");
 const emailHeader = document.getElementById("profile-email-header");
+const bizHeader = document.getElementById("profile-biz-header");
 const metaHeader = document.getElementById("profile-meta-header");
 const adminBadge = document.getElementById("profile-admin-badge");
 
@@ -259,7 +261,9 @@ onAuth(async (user) => {
 
   function populateFields(data, authUser) {
     if (data.email || authUser.email) {
-      emailInput.value = data.email || authUser.email;
+      const email = data.email || authUser.email;
+      emailInput.value = email;
+      emailHeader.textContent = email;
     }
     if (data.full_name || authUser.displayName) {
       const name = data.full_name || authUser.displayName;
@@ -269,8 +273,10 @@ onAuth(async (user) => {
     if (data.address || data.country) {
       addressInput.value = data.address || data.country;
     }
-    if (data.phone) {
-      phoneInput.value = data.phone;
+    if (data.phone || authUser.phoneNumber) {
+      const phoneVal = data.phone || authUser.phoneNumber;
+      phoneInput.value = phoneVal;
+      if (phoneHeader) phoneHeader.textContent = phoneVal;
     }
     if (data.business_org || data.business) {
       bizOrgInput.value = data.business_org || data.business;
@@ -290,6 +296,22 @@ onAuth(async (user) => {
     if (data.business_designation || data.profession) {
       bizDesigInput.value = data.business_designation || data.profession;
     }
+
+    // Render Company (Role) in header
+    if (bizHeader) {
+      const company = (data.business_org || data.business || "").trim();
+      const role = (data.business_designation || data.profession || "").trim();
+      if (company && role) {
+        bizHeader.textContent = `${company} (${role})`;
+      } else if (company) {
+        bizHeader.textContent = company;
+      } else if (role) {
+        bizHeader.textContent = role;
+      } else {
+        bizHeader.textContent = "Not specified";
+      }
+    }
+
     const currentAvatar = data.avatar_url || authUser.photoURL;
     if (currentAvatar) {
       avatarUrlInput.value = currentAvatar;
@@ -384,6 +406,20 @@ onAuth(async (user) => {
 
       if (newName) nameHeader.textContent = newName;
       if (payload.email) emailHeader.textContent = payload.email;
+      if (phoneHeader && payload.phone) phoneHeader.textContent = payload.phone;
+      if (bizHeader) {
+        const company = (payload.business_org || "").trim();
+        const role = (payload.business_designation || "").trim();
+        if (company && role) {
+          bizHeader.textContent = `${company} (${role})`;
+        } else if (company) {
+          bizHeader.textContent = company;
+        } else if (role) {
+          bizHeader.textContent = role;
+        } else {
+          bizHeader.textContent = "Not specified";
+        }
+      }
       setAvatar(newPic, newName || user.email);
 
       // Persist to local storage
