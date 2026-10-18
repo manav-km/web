@@ -541,11 +541,17 @@ table.data .num { text-align: right; font-family: var(--font-mono); }
   flex-direction: row !important;
   align-items: center !important;
   gap: var(--space-8) !important;
-  padding: var(--space-8) var(--space-10) !important;
+  padding: var(--space-8) var(--space-8) var(--space-8) var(--space-12) !important;
   margin-bottom: var(--space-6) !important;
   border-radius: var(--radius-lg) !important;
-  background: var(--bg-surface) !important;
+  background: var(--bg-near-black) !important;
   border: 1px solid var(--border-hairline) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+.profile-id-card:hover {
+  background: #11141c !important;
+  border-color: var(--border-strong) !important;
 }
 
 .profile-id-avatar-wrap {
@@ -554,6 +560,7 @@ table.data .num { text-align: right; font-family: var(--font-mono); }
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer;
+  margin-left: var(--space-4) !important;
 }
 
 .profile-id-avatar {
@@ -599,7 +606,8 @@ table.data .num { text-align: right; font-family: var(--font-mono); }
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
-  gap: var(--space-3) !important;
+  gap: 6px !important;
+  padding-left: var(--space-4) !important;
 }
 
 .profile-id-row {
@@ -607,23 +615,27 @@ table.data .num { text-align: right; font-family: var(--font-mono); }
   align-items: center !important;
   gap: var(--space-3) !important;
   color: var(--fg-secondary) !important;
-  font-size: var(--fs-body) !important;
-  line-height: 1.4 !important;
+  font-size: var(--fs-small) !important;
+  line-height: 1.35 !important;
+}
+
+.profile-id-row--name {
+  margin-bottom: 2px !important;
 }
 
 .profile-id-row--name h2 {
   font-size: var(--fs-h2) !important;
   margin: 0 !important;
-  line-height: 1.2 !important;
+  line-height: 1.15 !important;
   font-weight: 700 !important;
   color: var(--fg-primary) !important;
 }
 
 .profile-id-row--meta {
-  font-size: var(--fs-small) !important;
+  font-size: var(--fs-micro) !important;
   color: var(--fg-muted) !important;
   font-family: var(--font-mono) !important;
-  margin-top: 2px !important;
+  margin-top: 1px !important;
 }
 
 @media (max-width: 640px) {
@@ -632,6 +644,12 @@ table.data .num { text-align: right; font-family: var(--font-mono); }
     text-align: center !important;
     gap: var(--space-6) !important;
     padding: var(--space-6) !important;
+  }
+  .profile-id-avatar-wrap {
+    margin-left: 0 !important;
+  }
+  .profile-id-info {
+    padding-left: 0 !important;
   }
   .profile-id-row {
     justify-content: center !important;
