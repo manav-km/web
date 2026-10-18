@@ -59,41 +59,41 @@
       </div>
 
       <div id="profile-content" style="display: none;" class="prose form--full">
-        <!-- Identity Summary Card -->
-        <div class="card" style="display: flex; gap: var(--space-8); align-items: center; margin-bottom: var(--space-6); padding: var(--space-8); flex-wrap: wrap;">
-          <!-- Profile Picture (Left Side, Large & Clean, No Camera Emoji) -->
-          <div style="cursor: pointer; flex-shrink: 0;" id="profile-avatar-trigger" title="Click to upload a new profile picture" data-cursor-hover>
-            <div id="profile-avatar-display" class="avatar" style="width: 140px; height: 140px; min-width: 140px; min-height: 140px; font-size: 3.5rem; border-width: 2px; border-color: var(--border-strong); box-shadow: var(--shadow-md);">?</div>
+        <!-- Identity Summary Card (Large PFP locked to left-center, user info on right) -->
+        <div class="card profile-id-card">
+          <!-- Profile Picture (Left Side, Centered Vertically, Pretty Big, Stays Inside Box) -->
+          <div class="profile-id-avatar-wrap" id="profile-avatar-trigger" title="Click to upload a new profile picture" data-cursor-hover>
+            <div id="profile-avatar-display" class="avatar profile-id-avatar">?</div>
           </div>
 
           <!-- User's Information Stack (Right of Profile Picture) -->
-          <div style="flex: 1; min-width: 260px; display: flex; flex-direction: column; gap: var(--space-3); justify-content: center;">
+          <div class="profile-id-info">
             <!-- Row 1: Full Name (+ Admin badge) -->
-            <div style="display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;">
-              <h2 id="profile-name-header" style="font-size: var(--fs-h2); margin: 0; line-height: 1.15; font-weight: 700;">Account</h2>
+            <div class="profile-id-row profile-id-row--name">
+              <h2 id="profile-name-header">Account</h2>
               <span id="profile-admin-badge" class="badge badge--completed" style="display: none;">Admin</span>
             </div>
 
             <!-- Row 2: Phone Number -->
-            <div id="profile-phone-row" style="display: flex; align-items: center; gap: var(--space-2); color: var(--fg-secondary); font-size: var(--fs-body);">
+            <div id="profile-phone-row" class="profile-id-row">
               <span aria-hidden="true" style="opacity: 0.7;">&#128222;</span>
               <span id="profile-phone-header">Not provided</span>
             </div>
 
             <!-- Row 3: E-Mail -->
-            <div style="display: flex; align-items: center; gap: var(--space-2); color: var(--fg-secondary); font-size: var(--fs-body);">
+            <div class="profile-id-row">
               <span aria-hidden="true" style="opacity: 0.7;">&#9993;</span>
               <span id="profile-email-header"></span>
             </div>
 
             <!-- Row 4: Company (Role) -->
-            <div id="profile-biz-row" style="display: flex; align-items: center; gap: var(--space-2); color: var(--fg-secondary); font-size: var(--fs-body);">
+            <div id="profile-biz-row" class="profile-id-row">
               <span aria-hidden="true" style="opacity: 0.7;">&#127970;</span>
               <span id="profile-biz-header">Not specified</span>
             </div>
 
             <!-- Row 5: Join Date -->
-            <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-small); color: var(--fg-muted); font-family: var(--font-mono); margin-top: 2px;">
+            <div class="profile-id-row profile-id-row--meta">
               <span aria-hidden="true" style="opacity: 0.7;">&#128197;</span>
               <span id="profile-meta-header"></span>
             </div>
