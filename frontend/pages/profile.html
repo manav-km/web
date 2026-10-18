@@ -195,15 +195,15 @@
                 <span id="p-dob-hint" style="font-size: var(--fs-micro); color: var(--fg-muted); margin-top: 4px; display: block;"></span>
               </div>
 
-              <!-- Age Status & Privacy Agreement Checkboxes (Editable) -->
+              <!-- Age Status & Privacy Agreement Checkboxes (Verified / Immutable) -->
               <div class="form__row" style="margin-top: var(--space-4);">
                 <div class="field field--check">
-                  <input id="p-age-confirmed" type="checkbox" required />
-                  <label for="p-age-confirmed" style="cursor: pointer;">I confirm that I am at least 18 years of age</label>
+                  <input id="p-age-confirmed" type="checkbox" checked disabled style="cursor: not-allowed; opacity: 0.85;" />
+                  <label for="p-age-confirmed" style="cursor: not-allowed; color: var(--fg-muted);">Age 18+ Confirmed <span style="color: var(--status-success); font-weight: bold;">&#10003;</span></label>
                 </div>
                 <div class="field field--check">
-                  <input id="p-privacy-confirmed" type="checkbox" required />
-                  <label for="p-privacy-confirmed" style="cursor: pointer;">I agree to the <a href="/frontend/pages/privacy.html" target="_blank" rel="noopener" style="text-decoration: underline;">Privacy Policy</a> &amp; Terms</label>
+                  <input id="p-privacy-confirmed" type="checkbox" checked disabled style="cursor: not-allowed; opacity: 0.85;" />
+                  <label for="p-privacy-confirmed" style="cursor: not-allowed; color: var(--fg-muted);">Privacy Policy &amp; Terms Agreed <span style="color: var(--status-success); font-weight: bold;">&#10003;</span></label>
                 </div>
               </div>
             </div>

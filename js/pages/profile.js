@@ -298,12 +298,14 @@ onAuth(async (user) => {
     // Date of Birth: set value and allow full editing
     applyDobState(data.dob);
 
-    // Legal & Privacy checkboxes
+    // Legal & Privacy checkboxes (always checked & confirmed for registered accounts)
     if (ageConfirmedCheck) {
-      ageConfirmedCheck.checked = data.age_confirmed !== undefined ? Boolean(data.age_confirmed) : true;
+      ageConfirmedCheck.checked = true;
+      ageConfirmedCheck.disabled = true;
     }
     if (privacyConfirmedCheck) {
-      privacyConfirmedCheck.checked = data.privacy_accepted !== undefined ? Boolean(data.privacy_accepted) : true;
+      privacyConfirmedCheck.checked = true;
+      privacyConfirmedCheck.disabled = true;
     }
   }
 
@@ -312,20 +314,6 @@ onAuth(async (user) => {
     e.preventDefault();
     saveBtn.disabled = true;
     statusMsg.replaceChildren();
-
-    // Check age confirmation and privacy acceptance checkboxes
-    if (ageConfirmedCheck && !ageConfirmedCheck.checked) {
-      showMsg("Please confirm that you are at least 18 years of age.");
-      saveBtn.disabled = false;
-      ageConfirmedCheck.focus();
-      return;
-    }
-    if (privacyConfirmedCheck && !privacyConfirmedCheck.checked) {
-      showMsg("Please agree to the Privacy Policy & Terms.");
-      saveBtn.disabled = false;
-      privacyConfirmedCheck.focus();
-      return;
-    }
 
     // If DOB is entered, check 18+ requirement
     if (dobInput && dobInput.value) {
