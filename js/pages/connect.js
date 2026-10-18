@@ -54,7 +54,15 @@ async function renderForm(user) {
     profession: input("profession", profile.profession),
     business: input("business", profile.business, "text", { autocomplete: "organization" }),
     category: h("select", { id: "category", required: true }, h("option", { value: "" }, "Select…"), CATS.map(([v, l]) => h("option", { value: v }, l))),
-    deadline: input("deadline", "", "date", { min: new Date().toISOString().slice(0, 10) }),
+    deadline: (() => {
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const d = input("deadline", "", "date", { min: "1900-01-01" });
+      const fillToday = () => { if (!d.value) d.value = todayStr; };
+      d.addEventListener("click", fillToday);
+      d.addEventListener("focus", fillToday);
+      return d;
+    })(),
     budget: input("budget", "", "text", { placeholder: "e.g. ₹20,000 – ₹40,000" }),
     project_description: h("textarea", { id: "project_description", required: true, minlength: 10, maxlength: 5000 }),
   };

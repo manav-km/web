@@ -16,11 +16,26 @@ const TABS = ["Overview", "Clients", "Projects", "Repositories", "Achievements",
 let drawer = null;
 
 onAuth(async (user) => {
-  if (!user) return void (location.replace("/"));
+  if (!user) {
+    return void location.replace("/frontend/pages/auth.html?redirect=" + encodeURIComponent("/portfolio/admin"));
+  }
+
+  const isOwner = user.email && user.email.toLowerCase() === "manavkmlko@gmail.com";
+  let isAdmin = isOwner;
+
   try {
     const me = await api("/auth/bootstrap", { method: "POST", auth: true });
-    if (!me.is_admin) return void location.replace("/");
-  } catch { return void location.replace("/"); }
+    if (me?.is_admin) {
+      isAdmin = true;
+    }
+  } catch (err) {
+    console.warn("Admin bootstrap check:", err);
+  }
+
+  if (!isAdmin) {
+    return void location.replace("/");
+  }
+
   build();
 });
 

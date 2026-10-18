@@ -196,6 +196,17 @@
   background: var(--bg-near-black); border: 1px solid var(--border-hairline); border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4); width: 100%;
 }
+input[type="date"] {
+  color-scheme: dark;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.85);
+  opacity: 0.85;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
 .field textarea { min-height: 140px; resize: vertical; }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent-blue); outline: none; box-shadow: 0 0 0 3px var(--accent-blue-glow); }
 .form__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }

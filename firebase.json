@@ -22,6 +22,10 @@
         "destination": "/frontend/pages/admin/index.html"
       },
       {
+        "source": "/portfolio/admin/**",
+        "destination": "/frontend/pages/admin/index.html"
+      },
+      {
         "source": "/blog/:slug",
         "destination": "/frontend/pages/blog-post.html"
       }

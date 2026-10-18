@@ -61,8 +61,9 @@
       <div id="profile-content" style="display: none;" class="prose form--full">
         <!-- Identity Summary Card -->
         <div class="card" style="display: flex; gap: var(--space-6); align-items: center; margin-bottom: var(--space-6);">
-          <div style="position: relative;">
-            <div id="profile-avatar-display" class="avatar" style="width: 80px; height: 80px; min-width: 80px; min-height: 80px; font-size: 2rem; border-width: 2px;">?</div>
+          <div style="position: relative; cursor: pointer;" id="profile-avatar-trigger" title="Click to upload a new profile picture" data-cursor-hover>
+            <div id="profile-avatar-display" class="avatar" style="width: 84px; height: 84px; min-width: 84px; min-height: 84px; font-size: 2.2rem; border-width: 2px;">?</div>
+            <div style="position: absolute; bottom: 0; right: 0; background: var(--bg-surface); border: 1px solid var(--border-hairline); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 13px; box-shadow: var(--shadow-sm);" aria-hidden="true">&#128247;</div>
           </div>
           <div style="flex: 1;">
             <div style="display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;">
@@ -75,39 +76,136 @@
         </div>
 
         <!-- Edit Profile Form -->
-        <div class="card" style="margin-bottom: var(--space-6);">
-          <h3 style="font-size: var(--fs-body-lg); margin-bottom: var(--space-4);">Personal &amp; Contact Details</h3>
+        <div class="card" style="margin-bottom: var(--space-6); padding: var(--space-8);">
           <form id="profile-form" class="form form--full" novalidate>
-            <div class="form__row">
-              <div class="field">
-                <label for="p-full-name">Full Name</label>
-                <input id="p-full-name" type="text" autocomplete="name" placeholder="Your Name" />
+            <!-- ==================== [Box 1] Personal Info ==================== -->
+            <div class="auth-box">
+              <h3 class="auth-box__title">Personal Info</h3>
+
+              <!-- Row 1: Full Legal Name & Personal Address -->
+              <div class="form__row">
+                <div class="field">
+                  <label for="p-full-name">Full Legal Name</label>
+                  <input id="p-full-name" type="text" autocomplete="name" placeholder="Your Full Name" />
+                </div>
+                <div class="field">
+                  <label for="p-address">Personal Address / Region</label>
+                  <input id="p-address" type="text" autocomplete="street-address" placeholder="City, State, Country" />
+                </div>
               </div>
-              <div class="field">
-                <label for="p-phone">Phone Number</label>
-                <input id="p-phone" type="tel" autocomplete="tel" placeholder="+1 (555) 000-0000" />
+
+              <!-- Row 2: Account E-Mail & Phone Number -->
+              <div class="form__row" style="margin-top: var(--space-4);">
+                <div class="field">
+                  <label for="p-email">E-Mail</label>
+                  <input id="p-email" type="email" autocomplete="email" placeholder="name@example.com" />
+                </div>
+                <div class="field">
+                  <label for="p-phone">Phone Number</label>
+                  <input id="p-phone" type="tel" autocomplete="tel" placeholder="+1 (555) 000-0000" />
+                </div>
+              </div>
+
+              <!-- Row 3: Password & Confirm Password (Optional update) -->
+              <div class="form__row" style="margin-top: var(--space-4);">
+                <div class="field">
+                  <label for="p-pass">New Password</label>
+                  <input id="p-pass" type="password" autocomplete="new-password" minlength="8" placeholder="Leave blank to keep unchanged" />
+                </div>
+                <div class="field">
+                  <label for="p-pass-confirm">Confirm New Password</label>
+                  <input id="p-pass-confirm" type="password" autocomplete="new-password" minlength="8" placeholder="Re-enter new password" />
+                </div>
+              </div>
+
+              <!-- Row 3: Profile Picture Upload from Computer -->
+              <div class="field" style="margin-top: var(--space-5);">
+                <label style="display: flex; align-items: center; justify-content: space-between;">
+                  <span>Profile Picture</span>
+                  <span style="font-size: var(--fs-micro); color: var(--fg-muted); font-weight: normal;">PNG, JPG, or WebP up to 2MB</span>
+                </label>
+                <div style="display: flex; align-items: center; gap: var(--space-3); margin-top: 6px; flex-wrap: wrap;">
+                  <button id="p-avatar-browse-btn" class="btn btn--ghost" type="button" data-cursor-hover style="gap: var(--space-2); display: inline-flex; align-items: center;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span>Upload from Computer</span>
+                  </button>
+                  <button id="p-avatar-remove-btn" class="btn btn--ghost" type="button" data-cursor-hover style="display: none; color: var(--status-danger);">
+                    Remove Picture
+                  </button>
+                  <span id="p-avatar-upload-status" style="font-size: var(--fs-small); color: var(--fg-muted);"></span>
+                </div>
+                <input id="p-avatar-file" type="file" accept="image/png,image/jpeg,image/webp" style="display: none;" aria-label="Upload profile picture" />
+                <input id="p-avatar-url" type="hidden" />
               </div>
             </div>
 
-            <div class="form__row">
-              <div class="field">
-                <label for="p-country">Country / Region</label>
-                <input id="p-country" type="text" autocomplete="country-name" placeholder="e.g. India, United States" />
+            <!-- ==================== [Box 2] Business Info ==================== -->
+            <div class="auth-box">
+              <h3 class="auth-box__title">Business Info</h3>
+
+              <!-- Row 1: Organisation & Postal Address -->
+              <div class="form__row">
+                <div class="field">
+                  <label for="p-business-org">Organisation / Company</label>
+                  <input id="p-business-org" type="text" autocomplete="organization" placeholder="Company or organization" />
+                </div>
+                <div class="field">
+                  <label for="p-business-address">Postal / Office Address</label>
+                  <input id="p-business-address" type="text" placeholder="Office / postal address" />
+                </div>
               </div>
-              <div class="field">
-                <label for="p-profession">Profession / Title</label>
-                <input id="p-profession" type="text" placeholder="e.g. Product Manager, Engineer" />
+
+              <!-- Row 2: Business E-Mail & Business Phone -->
+              <div class="form__row" style="margin-top: var(--space-4);">
+                <div class="field">
+                  <label for="p-business-email">Business E-Mail</label>
+                  <input id="p-business-email" type="email" placeholder="work@company.com" />
+                </div>
+                <div class="field">
+                  <label for="p-business-phone">Business Phone</label>
+                  <input id="p-business-phone" type="tel" placeholder="Business phone number" />
+                </div>
+              </div>
+
+              <!-- Row 3: Business Type & Designation -->
+              <div class="form__row" style="margin-top: var(--space-4);">
+                <div class="field">
+                  <label for="p-business-type">Business Type</label>
+                  <input id="p-business-type" type="text" placeholder="e.g. Startup, Agency, Enterprise, Freelance" />
+                </div>
+                <div class="field">
+                  <label for="p-business-designation">Designation / Role</label>
+                  <input id="p-business-designation" type="text" placeholder="e.g. Founder, CEO, Director, Engineer" />
+                </div>
               </div>
             </div>
 
-            <div class="field">
-              <label for="p-business">Company / Business Name</label>
-              <input id="p-business" type="text" placeholder="Your organization or company (optional)" />
-            </div>
+            <!-- ==================== [Box 3] Legal & Privacy Info ==================== -->
+            <div class="auth-box">
+              <h3 class="auth-box__title">Legal &amp; Privacy Info</h3>
 
-            <div class="field">
-              <label for="p-avatar-url">Avatar Image URL (Optional)</label>
-              <input id="p-avatar-url" type="url" placeholder="https://..." />
+              <!-- Date of Birth -->
+              <div class="field" style="max-width: 400px;">
+                <label for="p-dob" id="p-dob-label">Date of Birth</label>
+                <input id="p-dob" type="date" />
+                <span id="p-dob-hint" style="font-size: var(--fs-micro); color: var(--fg-muted); margin-top: 4px; display: block;"></span>
+              </div>
+
+              <!-- Age Status & Privacy Agreement Checkboxes (Editable) -->
+              <div class="form__row" style="margin-top: var(--space-4);">
+                <div class="field field--check">
+                  <input id="p-age-confirmed" type="checkbox" required />
+                  <label for="p-age-confirmed" style="cursor: pointer;">I confirm that I am at least 18 years of age</label>
+                </div>
+                <div class="field field--check">
+                  <input id="p-privacy-confirmed" type="checkbox" required />
+                  <label for="p-privacy-confirmed" style="cursor: pointer;">I agree to the <a href="/frontend/pages/privacy.html" target="_blank" rel="noopener" style="text-decoration: underline;">Privacy Policy</a> &amp; Terms</label>
+                </div>
+              </div>
             </div>
 
             <div id="profile-status-msg" role="alert" style="margin-top: var(--space-2);"></div>

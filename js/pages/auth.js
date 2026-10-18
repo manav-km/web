@@ -64,11 +64,75 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
   const heading = document.getElementById("auth-heading");
   const subheading = document.getElementById("auth-subheading");
 
-  // Restrict DOB to at least 18 years ago
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  function calculateAge(dobStr) {
+    if (!dobStr) return 0;
+    const parts = dobStr.split("-").map(Number);
+    if (parts.length !== 3 || parts.some(isNaN)) return 0;
+    const [y, m, d] = parts;
+    const today = new Date();
+    let age = today.getFullYear() - y;
+    const monthDiff = (today.getMonth() + 1) - m;
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < d)) {
+      age--;
+    }
+    return age;
+  }
+
+  // DOB date picker: allow selecting year from 1900-01-01 up to current date
   if (inputDob) {
-    const maxDob = new Date();
-    maxDob.setFullYear(maxDob.getFullYear() - 18);
-    inputDob.setAttribute("max", maxDob.toISOString().split("T")[0]);
+    inputDob.setAttribute("min", "1900-01-01");
+    inputDob.setAttribute("max", todayStr);
+
+    const onDobClick = () => {
+      if (!inputDob.value) {
+        inputDob.value = todayStr;
+      }
+    };
+    inputDob.addEventListener("click", onDobClick);
+    inputDob.addEventListener("focus", onDobClick);
+
+    inputDob.addEventListener("change", () => {
+      if (checkAge && checkAge.checked && inputDob.value) {
+        if (calculateAge(inputDob.value) < 18) {
+          checkAge.checked = false;
+          showAlert("Based on the date of birth entered, you must be at least 18 years of age to register.");
+        } else {
+          clearAlert();
+        }
+      }
+    });
+  }
+
+  // Require DOB before confirming 18+
+  if (checkAge) {
+    checkAge.addEventListener("click", (e) => {
+      if (checkAge.checked) {
+        if (!inputDob || !inputDob.value) {
+          e.preventDefault();
+          checkAge.checked = false;
+          showAlert("Please enter your date of birth first before confirming you are over 18.");
+          if (inputDob) {
+            inputDob.focus();
+            try { inputDob.showPicker(); } catch (_) {}
+          }
+          return;
+        }
+
+        const age = calculateAge(inputDob.value);
+        if (age < 18) {
+          e.preventDefault();
+          checkAge.checked = false;
+          showAlert("Based on the date of birth entered, you must be at least 18 years of age to register.");
+          inputDob.focus();
+          return;
+        }
+
+        clearAlert();
+      }
+    });
   }
 
   // Cloudflare Turnstile mount
@@ -321,6 +385,16 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
           country: addressVal || undefined,
           profession: bDesigVal || bTypeVal || undefined,
           business: orgVal ? `${orgVal}${bAddressVal ? ` (${bAddressVal})` : ""}` : undefined,
+          address: addressVal || undefined,
+          business_org: orgVal || undefined,
+          business_address: bAddressVal || undefined,
+          business_email: inputBusinessEmail.value.trim() || undefined,
+          business_phone: bPhoneVal || undefined,
+          business_type: bTypeVal || undefined,
+          business_designation: bDesigVal || undefined,
+          dob: inputDob.value || undefined,
+          age_confirmed: true,
+          privacy_accepted: true,
         };
 
         if (nameVal) {
@@ -328,6 +402,9 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
         }
         await api("/profile", { method: "PUT", body: profileData, auth: true }).catch(() => {});
         await api("/auth/confirm-age", { method: "POST", body: { age_confirmed: true, privacy_accepted: true }, auth: true }).catch(() => {});
+        try {
+          localStorage.setItem(`user_profile_data_${cred.user.uid}`, JSON.stringify(profileData));
+        } catch (_) {}
 
         showAlert("Account created successfully! Redirecting...", true);
         finishRedirect();
@@ -346,15 +423,60 @@ import { TURNSTILE_SITE_KEY } from "../core/config.js";
   if (btnGoogle) {
     btnGoogle.addEventListener("click", async () => {
       clearAlert();
-      if (mode === "signup" && (!checkAge.checked || !checkPriv.checked)) {
-        showAlert("Please confirm you are over 18 and accept the Privacy Policy before continuing with Google.");
-        return;
+      if (mode === "signup") {
+        const dobVal = inputDob ? inputDob.value : "";
+        if (!dobVal) {
+          showAlert("Please enter your date of birth before continuing with Google sign-up.");
+          if (inputDob) {
+            inputDob.focus();
+            try { inputDob.showPicker(); } catch (_) {}
+          }
+          return;
+        }
+
+        const age = calculateAge(dobVal);
+        if (age < 18) {
+          showAlert("You must be at least 18 years of age to register.");
+          if (inputDob) inputDob.focus();
+          return;
+        }
+
+        if (!checkAge.checked) {
+          showAlert("Please confirm you are over 18 before continuing with Google sign-up.");
+          checkAge.focus();
+          return;
+        }
+
+        if (!checkPriv.checked) {
+          showAlert("Please confirm you agree to our Privacy Policy and Terms before continuing with Google sign-up.");
+          checkPriv.focus();
+          return;
+        }
       }
 
       try {
-        await signInGoogle();
-        if (checkAge.checked && checkPriv.checked) {
+        const cred = await signInGoogle();
+        if (mode === "signup") {
+          const profileData = {
+            full_name: (inputName?.value.trim()) || cred.user.displayName || undefined,
+            dob: inputDob.value || undefined,
+            age_confirmed: true,
+            privacy_accepted: true,
+          };
+          if (inputAddress?.value.trim()) profileData.address = inputAddress.value.trim();
+          if (inputPhone?.value.trim()) profileData.phone = inputPhone.value.trim();
+          if (inputBusinessOrg?.value.trim()) profileData.business_org = inputBusinessOrg.value.trim();
+          if (inputBusinessAddress?.value.trim()) profileData.business_address = inputBusinessAddress.value.trim();
+          if (inputBusinessEmail?.value.trim()) profileData.business_email = inputBusinessEmail.value.trim();
+          if (inputBusinessPhone?.value.trim()) profileData.business_phone = inputBusinessPhone.value.trim();
+          if (inputBusinessType?.value.trim()) profileData.business_type = inputBusinessType.value.trim();
+          if (inputBusinessDesignation?.value.trim()) profileData.business_designation = inputBusinessDesignation.value.trim();
+
+          await api("/profile", { method: "PUT", body: profileData, auth: true }).catch(() => {});
           await api("/auth/confirm-age", { method: "POST", body: { age_confirmed: true, privacy_accepted: true }, auth: true }).catch(() => {});
+          try {
+            localStorage.setItem(`user_profile_data_${cred.user.uid}`, JSON.stringify(profileData));
+          } catch (_) {}
         }
         showAlert("Signed in with Google! Redirecting...", true);
         finishRedirect();
